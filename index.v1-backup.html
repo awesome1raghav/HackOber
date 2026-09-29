@@ -1,0 +1,1038 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+<title>HACKOBER — Outro</title>
+
+<!-- ============================================================
+     FONTS
+     Cinematic typography: "Bebas Neue" (ultra-clean, tall, movie trailer
+     condensed display) paired with "Syne" for geometric weight,
+     and "Space Grotesk" + "Space Mono" for tech/narrative body copy.
+     ============================================================ -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Space+Grotesk:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+
+<style>
+  :root{
+    --bg: #0a0a0a;
+    --bg-soft: #121212;
+    --ink: #f5f2ea;
+    --ink-dim: rgba(245,242,234,0.55);
+    --ember: #ff6b1a;
+    --ember-bright: #ff8838;
+    --ember-dim: rgba(255,107,26,0.35);
+    --font-display: 'Bebas Neue', 'Syne', sans-serif;
+    --font-body: 'Space Grotesk', sans-serif;
+    --font-mono: 'Space Mono', monospace;
+    --ease-out: cubic-bezier(.16,.84,.44,1);
+  }
+
+  *{ box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html, body{
+    margin:0; padding:0; width:100%; height:100%;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--font-body);
+    overflow: hidden;
+    overscroll-behavior: none;
+    user-select: none;
+  }
+
+  /* Ambient cinematic canvas: drifting ember sparks */
+  #embers{
+    position:fixed; inset:0; z-index: 1; pointer-events:none;
+    opacity: 0.75;
+  }
+
+  /* film grain texture overlay for mood */
+  #grain{
+    position:fixed; inset:0; z-index: 999; pointer-events:none;
+    opacity: 0.045; mix-blend-mode: overlay;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='120' height='120'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+  }
+  #vignette{
+    position:fixed; inset:0; z-index: 998; pointer-events:none;
+    background: radial-gradient(ellipse at center, rgba(0,0,0,0) 35%, rgba(0,0,0,0.65) 100%);
+  }
+
+  #app{
+    position:relative; width:100vw; height:100vh; z-index: 5;
+  }
+
+  .scene{
+    position:absolute; inset:0;
+    display:flex; align-items:center; justify-content:center;
+    flex-direction:column;
+    text-align:center;
+    padding: 6vw;
+    opacity:0; visibility:hidden;
+    pointer-events:none;
+  }
+  .scene.active{
+    opacity:1; visibility:visible; pointer-events:auto;
+  }
+
+  /* Punch Typography - Cinematic Movie Trailer Treatment */
+  .punch{
+    font-family: var(--font-display);
+    font-weight: 400;
+    letter-spacing: 0.05em;
+    font-size: clamp(3rem, 13vw, 11rem);
+    line-height: 0.92;
+    text-transform: uppercase;
+    margin: 0;
+    color: var(--ink);
+    text-shadow: 0 4px 30px rgba(0,0,0,0.85);
+  }
+  .punch.ember{
+    color: var(--ember);
+    text-shadow: 0 0 35px var(--ember-dim), 0 0 85px rgba(255,107,26,0.3);
+  }
+
+  .sub{
+    font-family: var(--font-body);
+    font-weight: 400;
+    font-size: clamp(0.85rem, 1.6vw, 1.15rem);
+    color: var(--ink-dim);
+    letter-spacing: 0.04em;
+    margin: 1.2em 0 0 0;
+    max-width: 640px;
+  }
+
+  .mono-small{
+    font-family: var(--font-mono);
+    font-size: clamp(0.65rem, 1.1vw, 0.85rem);
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    color: var(--ink-dim);
+  }
+
+  /* ---------- Scene 1: LOADING ---------- */
+  #scene-loading .ember-orb{
+    width: 58px; height: 58px; border-radius: 50%;
+    background: radial-gradient(circle at 35% 35%, #ffcf9e, var(--ember) 45%, rgba(255,107,26,0) 75%);
+    box-shadow: 0 0 45px 12px var(--ember-dim);
+    margin-bottom: 2.2rem;
+    animation: pulse 2.4s ease-in-out infinite;
+  }
+  @keyframes pulse{
+    0%,100%{ transform: scale(1); opacity:0.85; }
+    50%{ transform: scale(1.16); opacity:1; }
+  }
+  .loading-bar-track{
+    width: min(280px, 60vw); height: 2px; background: rgba(245,242,234,0.15);
+    margin-top: 1.6rem; position:relative; overflow:hidden;
+    border-radius: 1px;
+  }
+  .loading-bar-fill{
+    position:absolute; left:0; top:0; bottom:0; width:0%;
+    background: var(--ember);
+    box-shadow: 0 0 14px var(--ember);
+  }
+
+  /* ---------- Scene 3: THE ARCHIVE (Single Kinetic Node) ---------- */
+  #scene-archive{ overflow:hidden; position:relative; }
+  .archive-flash{
+    position:absolute; inset:0;
+    display:flex; align-items:center; justify-content:center;
+    opacity:0;
+  }
+  .archive-flash img, .archive-flash .ph{
+    width:100%; height:100%; object-fit:cover;
+    filter: grayscale(0.25) contrast(1.15) brightness(0.65);
+  }
+  .archive-flash .ph{
+    display:flex; align-items:center; justify-content:center;
+    background: #141414;
+    color: rgba(245,242,234,0.22);
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    letter-spacing:0.2em;
+  }
+  
+  /* SINGLE kinetic word node: zero overlap guaranteed */
+  .archive-word{
+    position:absolute; inset:0;
+    display:flex; align-items:center; justify-content:center;
+    z-index: 10; opacity:0; pointer-events:none;
+    font-family: var(--font-display);
+    font-size: clamp(3.5rem, 16vw, 13rem);
+    letter-spacing: 0.05em;
+    line-height: 0.92;
+    text-transform:uppercase;
+    color: var(--ink);
+    text-shadow: 0 4px 35px rgba(0,0,0,0.9);
+  }
+  .archive-word.ember{
+    color: var(--ember);
+    text-shadow: 0 0 40px rgba(255,107,26,0.7), 0 0 100px rgba(255,107,26,0.35);
+  }
+
+  /* ---------- Scene 4/8: ARTIFACT / VAULT ---------- */
+  .artifact-wrap{
+    position:relative;
+    width: min(290px, 55vw);
+    margin: 0 auto;
+  }
+  .artifact-glow{
+    position:absolute; inset:-40%;
+    background: radial-gradient(circle, rgba(255,107,26,0.38), transparent 65%);
+    opacity:0; pointer-events:none; z-index:0;
+  }
+  .artifact-svg{ position:relative; z-index:1; display:block; width:100%; height:auto; }
+  .cta-open{
+    margin-top: 2.4rem;
+    display:inline-block;
+    font-family: var(--font-mono);
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    font-size: 0.85rem;
+    padding: 0.95em 2.4em;
+    border: 1px solid var(--ember);
+    color: var(--ember);
+    cursor:pointer;
+    background: transparent;
+    box-shadow: 0 0 0px var(--ember-dim);
+    animation: ctapulse 2.2s ease-in-out infinite;
+    opacity:0;
+    transition: background 0.3s, color 0.3s, transform 0.2s;
+  }
+  .cta-open:hover{
+    background: rgba(255,107,26,0.12);
+    transform: scale(1.03);
+  }
+  @keyframes ctapulse{
+    0%,100%{ box-shadow: 0 0 6px var(--ember-dim); }
+    50%{ box-shadow: 0 0 26px var(--ember-dim); }
+  }
+
+  /* ---------- Scene 5: GLITCH ---------- */
+  .glitch-wrap{ position:relative; }
+  .glitch-active .glitch-wrap{
+    animation: glitchShake 0.06s steps(2) infinite;
+  }
+  @keyframes glitchShake{
+    0%{ transform: translate(0,0) skewX(0deg); }
+    25%{ transform: translate(-7px,3px) skewX(2deg); }
+    50%{ transform: translate(6px,-4px) skewX(-3deg); }
+    75%{ transform: translate(-4px,2px) skewX(1deg); }
+    100%{ transform: translate(5px,-2px) skewX(-1deg); }
+  }
+  .glitch-active .punch{
+    text-shadow: 4px 0 rgba(255,0,60,0.8), -4px 0 rgba(0,210,255,0.7);
+  }
+  #freeze-flash{
+    position:fixed; inset:0; background:#000; z-index: 900;
+    opacity:0; pointer-events:none;
+  }
+
+  /* ---------- Scene 7: THE BAIT / BOUNTY ---------- */
+  .qr-box{
+    width: min(220px, 45vw); aspect-ratio: 1/1;
+    border: 1px solid var(--ember-dim);
+    box-shadow: 0 0 35px rgba(255,107,26,0.22), inset 0 0 25px rgba(255,107,26,0.06);
+    display:flex; align-items:center; justify-content:center;
+    flex-direction: column;
+    margin: 2rem auto 0.9rem;
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    letter-spacing:0.18em;
+    color: var(--ink);
+    text-align:center;
+    padding: 1rem;
+    position: relative;
+    background: repeating-linear-gradient(45deg, rgba(255,255,255,0.02) 0 10px, transparent 10px 20px);
+  }
+  .qr-box::before, .qr-box::after{
+    content: '';
+    position: absolute; width: 8px; height: 8px;
+    border-color: var(--ember); border-style: solid;
+  }
+  .qr-box::before{ top: -2px; left: -2px; border-width: 2px 0 0 2px; }
+  .qr-box::after{ bottom: -2px; right: -2px; border-width: 0 2px 2px 0; }
+
+  .link-btn{
+    margin-top: 1.8rem;
+    display:inline-block;
+    font-family: var(--font-mono);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    font-size: 0.82rem;
+    color: var(--ink);
+    border: 1px solid var(--ember);
+    padding: 0.85em 2em;
+    cursor:pointer;
+    background: transparent;
+    transition: all 0.25s;
+  }
+  .link-btn:hover{
+    background: var(--ember);
+    color: #0a0a0a;
+    box-shadow: 0 0 25px var(--ember-dim);
+  }
+
+  .fb-wink{
+    font-family: var(--font-mono);
+    font-size: clamp(0.7rem, 1.2vw, 0.85rem);
+    letter-spacing: 0.1em;
+    color: var(--ember-bright);
+    opacity: 0;
+    margin-top: 1.6rem;
+    max-width: 520px;
+    line-height: 1.6;
+    padding: 0 1rem;
+  }
+
+  /* ---------- Scene 10: FINAL ---------- */
+  .final-logo{
+    font-family: var(--font-display);
+    font-size: clamp(2rem, 6vw, 3.4rem);
+    color: var(--ember);
+    letter-spacing: 0.08em;
+    text-shadow: 0 0 30px var(--ember-dim);
+    margin-bottom: 1.2rem;
+    opacity:0;
+  }
+  .ig-link{
+    display:inline-block;
+    margin-top: 1.8rem;
+    font-family: var(--font-mono);
+    font-size: clamp(0.95rem, 2.2vw, 1.3rem);
+    letter-spacing: 0.15em;
+    color: var(--ember);
+    text-decoration:none;
+    border-bottom: 1px solid var(--ember-dim);
+    padding-bottom: 0.3em;
+    transition: all 0.25s;
+    opacity:0;
+  }
+  .ig-link:hover{
+    color: #fff;
+    border-color: #fff;
+    text-shadow: 0 0 20px var(--ember);
+  }
+  .final-footer{
+    position:absolute; bottom: 8vh; left:0; right:0;
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    letter-spacing:0.32em;
+    text-transform:uppercase;
+    color: var(--ink-dim);
+    opacity:0;
+  }
+  .final-ember-bg{
+    position:absolute; inset:0; z-index:-1;
+    background: radial-gradient(ellipse at 50% 60%, rgba(255,107,26,0.12), transparent 60%);
+    animation: pulse 5s ease-in-out infinite;
+  }
+
+  /* ---------- Progress indicator ---------- */
+  #progress{
+    position:fixed; bottom: 4vh; left:50%; transform:translateX(-50%);
+    display:flex; gap: 8px; z-index: 500;
+    opacity: 0.55;
+    transition: opacity 0.4s;
+  }
+  #progress.hide{ opacity:0; }
+  #progress .dot{
+    width:5px; height:5px; border-radius:50%;
+    background: rgba(245,242,234,0.25);
+    transition: background 0.3s, transform 0.3s;
+  }
+  #progress .dot.on{
+    background: var(--ember);
+    transform: scale(1.4);
+  }
+
+  /* ---------- Transition overlay (crossfade/blur) ---------- */
+  #transition-veil{
+    position:fixed; inset:0; z-index: 800;
+    background: var(--bg);
+    opacity:0; pointer-events:none;
+  }
+
+  .hint{
+    position:fixed; bottom: 2vh; left:50%; transform:translateX(-50%);
+    font-family: var(--font-mono);
+    font-size: 0.6rem;
+    letter-spacing:0.22em;
+    text-transform:uppercase;
+    color: rgba(245,242,234,0.28);
+    z-index: 500;
+    pointer-events:none;
+    transition: opacity 0.3s;
+  }
+</style>
+</head>
+<body>
+
+<canvas id="embers"></canvas>
+<div id="grain"></div>
+<div id="vignette"></div>
+<div id="freeze-flash"></div>
+<div id="transition-veil"></div>
+
+<div id="app">
+
+  <!-- ================= SCENE 1: LOADING ================= -->
+  <section class="scene" id="scene-loading">
+    <div class="ember-orb"></div>
+    <div class="mono-small">Initializing Experience…</div>
+    <div class="loading-bar-track"><div class="loading-bar-fill" id="loadingFill"></div></div>
+  </section>
+
+  <!-- ================= SCENE 2: ARRIVAL ================= -->
+  <section class="scene" id="scene-arrival">
+    <div class="mono-small" id="arrivalLogo" style="margin-bottom:1.6rem; letter-spacing:0.4em; opacity:0;">HACKOBER</div>
+    <h1 class="punch" id="arrivalText1" style="opacity:0;">YOU MADE IT.</h1>
+    <h1 class="punch ember" id="arrivalText2" style="opacity:0; display:none;">WELCOME, SURVIVOR.</h1>
+  </section>
+
+  <!-- ================= SCENE 3: THE ARCHIVE (REBUILT - ZERO OVERLAP) ================= -->
+  <section class="scene" id="scene-archive">
+    <div id="archiveFlashes"></div>
+    <!-- Single kinetic punch text container -->
+    <div class="archive-word" id="archivePunchText"></div>
+  </section>
+
+  <!-- ================= SCENE 4: THE REWARD / VAULT ================= -->
+  <section class="scene" id="scene-reward">
+    <div class="artifact-wrap">
+      <div class="artifact-glow" id="rewardGlow"></div>
+      <svg class="artifact-svg" id="rewardArtifact" viewBox="0 0 200 160" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <rect x="10" y="40" width="180" height="110" rx="4" stroke="#f5f2ea" stroke-opacity="0.6" stroke-width="1.5"/>
+        <path id="envFlapBack" d="M10 40 L100 100 L190 40" stroke="#f5f2ea" stroke-opacity="0.6" stroke-width="1.5" fill="none"/>
+        <path id="envFlapFront" d="M10 40 L100 95 L190 40 L190 44 L100 100 L10 44 Z" fill="#0a0a0a" stroke="#f5f2ea" stroke-opacity="0.6" stroke-width="1.5" style="transform-origin: 100px 40px;"/>
+        <circle id="envSeal" cx="100" cy="70" r="10" fill="#ff6b1a" opacity="0.9"/>
+      </svg>
+    </div>
+    <p class="sub" id="rewardText" style="opacity:0;">SOMETHING WAS LEFT BEHIND.</p>
+    <button class="cta-open" id="openBtn">UNSEAL VAULT</button>
+  </section>
+
+  <!-- ================= SCENE 5: THE REVEAL ================= -->
+  <section class="scene" id="scene-reveal">
+    <div class="glitch-wrap" id="revealGlitchWrap">
+      <div class="artifact-wrap">
+        <div class="artifact-glow" id="revealGlow"></div>
+        <svg class="artifact-svg" viewBox="0 0 200 160" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect x="10" y="40" width="180" height="110" rx="4" stroke="#f5f2ea" stroke-opacity="0.6" stroke-width="1.5"/>
+          <path id="revealFlap" d="M10 40 L100 95 L190 40" stroke="#ff6b1a" stroke-width="2" fill="none" style="transform-origin: 100px 40px;"/>
+        </svg>
+      </div>
+      <h2 class="punch ember" id="revealText" style="opacity:0; font-size: clamp(2.4rem, 9vw, 6rem); margin-top: 1.4rem;">RECOGNITION</h2>
+    </div>
+  </section>
+
+  <!-- ================= SCENE 6: THE TWIST ================= -->
+  <section class="scene" id="scene-twist">
+    <h1 class="punch" id="twistText1" style="opacity:0;">NOT SO FAST.</h1>
+    <h1 class="punch ember" id="twistText2" style="opacity:0; display:none;">ACCESS RESTRICTED.</h1>
+  </section>
+
+  <!-- ================= SCENE 7: THE BAIT (SURVIVOR BOUNTY) ================= -->
+  <section class="scene" id="scene-feedback">
+    <div class="mono-small" id="fbLine1" style="opacity:0;">CLASSIFIED DROP // SECTOR 042</div>
+    <h1 class="punch ember" id="fbLine2" style="opacity:0; font-size: clamp(2.5rem, 9vw, 6.5rem);">SURVIVOR REWARD</h1>
+    <p class="sub" id="fbSub" style="opacity:0;">Scan to claim your classified post-hack bounty before this channel expires.</p>
+    <div class="qr-box" id="fbQr" style="opacity:0;">
+      <span>[ SCAN TO UNLOCK ]</span>
+    </div>
+    <div class="mono-small" id="fbCaption" style="opacity:0;">Encrypted transmission • Direct participant access</div>
+    <button class="link-btn" id="fbSubmitBtn" style="opacity:0;">I CLAIMED IT →</button>
+    <div class="fb-wink" id="fbWink">(We lied. It's the feedback form. We're not sorry. But your brutal feedback is the only thing keeping our next flagship alive. Be honest.)</div>
+  </section>
+
+  <!-- ================= SCENE 8: REWARD UNLOCKED ================= -->
+  <section class="scene" id="scene-unlocked">
+    <div class="artifact-wrap">
+      <div class="artifact-glow" id="unlockedGlow"></div>
+      <svg class="artifact-svg" viewBox="0 0 200 160" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <rect x="10" y="40" width="180" height="110" rx="4" stroke="#ff6b1a" stroke-width="1.5"/>
+        <path id="unlockedFlap" d="M10 40 L100 -10 L190 40" stroke="#ff6b1a" stroke-width="2" fill="none" style="transform-origin: 100px 40px;"/>
+      </svg>
+    </div>
+    <h1 class="punch ember" id="unlockedText1" style="opacity:0; margin-top:1.2rem;">UNLOCKED.</h1>
+    <p class="sub" id="unlockedText2" style="opacity:0;">SURVIVAL PROTOCOL COMPLETE.</p>
+  </section>
+
+  <!-- ================= SCENE 9: THE TEASE ================= -->
+  <section class="scene" id="scene-tease">
+    <h1 class="punch" id="teaseText1" style="opacity:0;">THOUGHT THAT WAS IT?</h1>
+    <h1 class="punch ember" id="teaseText2" style="opacity:0; display:none;">THE REAL NIGHTMARE BEGINS NEXT OCTOBER.</h1>
+  </section>
+
+  <!-- ================= SCENE 10: FINAL FRAME ================= -->
+  <section class="scene" id="scene-final">
+    <div class="final-ember-bg"></div>
+    <div class="final-logo" id="finalLogo">HACKOBER</div>
+    <p class="sub" id="finalLine1" style="opacity:0;">OUR FLAGSHIP EVENT IS COMING.</p>
+    <h1 class="punch ember" id="finalLine2" style="opacity:0; font-size: clamp(2rem, 7.5vw, 5.5rem);">FOLLOW THE NEXT CHAPTER.</h1>
+    <a class="ig-link" id="finalIgLink" href="#" target="_blank" rel="noopener">@YOUR_INSTAGRAM</a>
+    <div class="final-footer">Something Bigger Is Coming.</div>
+  </section>
+
+</div>
+
+<div id="progress"></div>
+<div class="hint" id="hint">click / space / → to continue</div>
+
+<!-- GSAP Animation Library -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+
+<script>
+/* ================================================================
+   HACKOBER — OUTRO SEQUENCE
+   Cinematic narrative slide engine. Vanilla JS + GSAP.
+   ================================================================ */
+
+/* ---------------- CONFIG — edit copy / links here ---------------- */
+const CONFIG = {
+  EVENT_NAME: "HACKOBER",
+  INSTAGRAM_HANDLE: "@your_instagram",
+  INSTAGRAM_URL: "https://instagram.com/your_instagram",
+  FEEDBACK_QR_LABEL: "[ SCAN TO UNLOCK ]",
+  // Swap these for real event photography (any image URL / path works)
+  ARCHIVE_IMAGES: [
+    "https://picsum.photos/seed/hackober1/800/1000",
+    "https://picsum.photos/seed/hackober2/800/1000",
+    "https://picsum.photos/seed/hackober3/800/1000",
+    "https://picsum.photos/seed/hackober4/800/1000",
+    "https://picsum.photos/seed/hackober5/800/1000",
+    "https://picsum.photos/seed/hackober6/800/1000"
+  ],
+  ARCHIVE_WORDS: ["IDEATE.", "BUILD.", "BREAK.", "FIX.", "SHIP."],
+  ARCHIVE_FINAL_WORD: "SURVIVE."
+};
+
+document.getElementById('finalIgLink').textContent = CONFIG.INSTAGRAM_HANDLE;
+document.getElementById('finalIgLink').href = CONFIG.INSTAGRAM_URL;
+document.getElementById('fbQr').querySelector('span').textContent = CONFIG.FEEDBACK_QR_LABEL;
+
+/* ---------------- AMBIENT EMBER PARTICLES ---------------- */
+(function initEmbers(){
+  const canvas = document.getElementById('embers');
+  const ctx = canvas.getContext('2d');
+  let width, height;
+  const embers = [];
+  const COUNT = 28;
+
+  function resize(){
+    width = canvas.width = window.innerWidth;
+    height = canvas.height = window.innerHeight;
+  }
+  window.addEventListener('resize', resize);
+  resize();
+
+  for(let i=0; i<COUNT; i++){
+    embers.push({
+      x: Math.random() * width,
+      y: Math.random() * height,
+      size: Math.random() * 2 + 1,
+      speedY: Math.random() * 0.45 + 0.2,
+      speedX: (Math.random() - 0.5) * 0.25,
+      alpha: Math.random() * 0.6 + 0.2,
+      pulse: Math.random() * Math.PI * 2
+    });
+  }
+
+  function render(){
+    ctx.clearRect(0,0,width,height);
+    for(let p of embers){
+      p.y -= p.speedY;
+      p.x += p.speedX;
+      p.pulse += 0.03;
+      if(p.y < -10){ p.y = height + 10; p.x = Math.random() * width; }
+      if(p.x < -10) p.x = width + 10;
+      if(p.x > width + 10) p.x = -10;
+
+      const currentAlpha = p.alpha + Math.sin(p.pulse) * 0.15;
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+      ctx.fillStyle = `rgba(255, 107, 26, ${Math.max(0, currentAlpha)})`;
+      ctx.shadowBlur = 10;
+      ctx.shadowColor = '#ff6b1a';
+      ctx.fill();
+    }
+    requestAnimationFrame(render);
+  }
+  render();
+})();
+
+/* ---------------- SCENE REGISTRY ---------------- */
+const SCENES = [
+  'scene-loading',   // 1
+  'scene-arrival',   // 2
+  'scene-archive',   // 3
+  'scene-reward',    // 4
+  'scene-reveal',    // 5
+  'scene-twist',     // 6
+  'scene-feedback',  // 7
+  'scene-unlocked',  // 8
+  'scene-tease',      // 9
+  'scene-final'       // 10
+];
+
+let currentIndex = 0;
+let canAdvance = false;
+let autoAdvanceLock = false;
+
+const appEl = document.getElementById('app');
+const veilEl = document.getElementById('transition-veil');
+const progressEl = document.getElementById('progress');
+const hintEl = document.getElementById('hint');
+
+/* ---------------- PROGRESS DOTS ---------------- */
+SCENES.forEach((_, i) => {
+  const d = document.createElement('div');
+  d.className = 'dot';
+  progressEl.appendChild(d);
+});
+function updateProgress(i){
+  [...progressEl.children].forEach((d, idx) => d.classList.toggle('on', idx === i));
+}
+
+/* ---------------- localStorage / URL param handling ---------------- */
+const params = new URLSearchParams(location.search);
+if (params.get('done') === 'true') {
+  localStorage.setItem('hackober_feedbackDone', 'true');
+}
+function feedbackDone(){
+  return localStorage.getItem('hackober_feedbackDone') === 'true';
+}
+
+/* ---------------- Dev-mode deep link: #scene=3 ---------------- */
+function getHashScene(){
+  const m = location.hash.match(/scene=(\d+)/);
+  if (m) {
+    const n = parseInt(m[1], 10) - 1;
+    if (n >= 0 && n < SCENES.length) return n;
+  }
+  return null;
+}
+
+/* ---------------- CORE: go to scene index ---------------- */
+function goToScene(index, { instant = false } = {}) {
+  if (index < 0 || index >= SCENES.length) return;
+
+  const prevEl = document.getElementById(SCENES[currentIndex]);
+  const nextEl = document.getElementById(SCENES[index]);
+  currentIndex = index;
+  canAdvance = false;
+  autoAdvanceLock = false;
+  updateProgress(index);
+
+  const doSwap = () => {
+    if (prevEl && prevEl !== nextEl) prevEl.classList.remove('active');
+    nextEl.classList.add('active');
+    runSceneEntrance(SCENES[index]);
+  };
+
+  if (instant) {
+    doSwap();
+    return;
+  }
+
+  // Cinematic crossfade
+  gsap.timeline()
+    .to(veilEl, { opacity: 1, duration: 0.28, ease: 'power1.in' })
+    .call(doSwap)
+    .to(veilEl, { opacity: 0, duration: 0.35, ease: 'power1.out' });
+}
+
+function advance() {
+  if (autoAdvanceLock) return;
+  if (!canAdvance) return;
+  if (currentIndex < SCENES.length - 1) {
+    goToScene(currentIndex + 1);
+  }
+}
+
+/* ---------------- INPUT LISTENERS ---------------- */
+appEl.addEventListener('click', (e) => {
+  if (e.target.closest('#openBtn, #fbSubmitBtn, .ig-link')) return;
+  advance();
+});
+window.addEventListener('keydown', (e) => {
+  if (['Space', 'Enter', 'ArrowRight'].includes(e.code)) {
+    e.preventDefault();
+    advance();
+  }
+});
+
+/* ================================================================
+   SCENE ENTRANCE ANIMATIONS
+   ================================================================ */
+function runSceneEntrance(id) {
+  switch (id) {
+    case 'scene-loading':   sceneLoading(); break;
+    case 'scene-arrival':   sceneArrival(); break;
+    case 'scene-archive':   sceneArchive(); break;
+    case 'scene-reward':    sceneReward(); break;
+    case 'scene-reveal':    sceneReveal(); break;
+    case 'scene-twist':     sceneTwist(); break;
+    case 'scene-feedback':  sceneFeedback(); break;
+    case 'scene-unlocked':  sceneUnlocked(); break;
+    case 'scene-tease':     sceneTease(); break;
+    case 'scene-final':     sceneFinal(); break;
+  }
+}
+
+/* ---------------- SCENE 1: LOADING ---------------- */
+function sceneLoading() {
+  autoAdvanceLock = true;
+  hintEl.style.opacity = 0;
+  progressEl.classList.add('hide');
+  const fill = document.getElementById('loadingFill');
+  gsap.set(fill, { width: '0%' });
+  gsap.to(fill, {
+    width: '100%',
+    duration: 2.8,
+    ease: 'power1.inOut',
+    onComplete: () => {
+      goToScene(1);
+    }
+  });
+}
+
+/* ---------------- SCENE 2: ARRIVAL ---------------- */
+function sceneArrival() {
+  progressEl.classList.remove('hide');
+  hintEl.style.opacity = 0.6;
+  const logo = document.getElementById('arrivalLogo');
+  const t1 = document.getElementById('arrivalText1');
+  const t2 = document.getElementById('arrivalText2');
+
+  gsap.set([logo, t1], { clearProps: 'all' });
+  gsap.set(logo, { opacity: 0, scale: 0.9 });
+  gsap.set(t1, { opacity: 0, y: 15, display: 'block' });
+  gsap.set(t2, { opacity: 0, display: 'none' });
+
+  const tl = gsap.timeline({
+    onComplete: () => { canAdvance = true; }
+  });
+  tl.to(logo, { opacity: 1, scale: 1, duration: 0.9, ease: 'power2.out' })
+    .to(logo, { textShadow: '0 0 25px rgba(255,107,26,0.6)', duration: 0.4 }, '-=0.2')
+    .to(t1, { opacity: 1, y: 0, duration: 0.7, ease: 'power2.out' }, '+=0.3')
+    .to(t1, { opacity: 1, duration: 2.4 }) // hold
+    .to(t1, { opacity: 0, duration: 0.45 })
+    .set(t1, { display: 'none' })
+    .set(t2, { display: 'block' })
+    .to(t2, { opacity: 1, duration: 0.8, ease: 'power2.out' })
+    .to(t2, { opacity: 1, duration: 2.2 });
+}
+
+/* ---------------- SCENE 3: THE ARCHIVE (ZERO OVERLAP REBUILD) ---------------- */
+function sceneArchive() {
+  hintEl.style.opacity = 0;
+  autoAdvanceLock = true;
+  const flashesWrap = document.getElementById('archiveFlashes');
+  const punchText = document.getElementById('archivePunchText');
+
+  flashesWrap.innerHTML = '';
+  punchText.className = 'archive-word';
+  punchText.textContent = '';
+  gsap.set(punchText, { opacity: 0, scale: 0.9, clearProps: 'transform,filter' });
+
+  // Build flash elements from config
+  const images = CONFIG.ARCHIVE_IMAGES;
+  images.forEach((src, i) => {
+    const div = document.createElement('div');
+    div.className = 'archive-flash';
+    if (src) {
+      const img = document.createElement('img');
+      img.src = src;
+      img.alt = `Event photo ${i + 1}`;
+      div.appendChild(img);
+    } else {
+      const ph = document.createElement('div');
+      ph.className = 'ph';
+      ph.textContent = `EVENT ARCHIVE // ${i + 1}`;
+      div.appendChild(ph);
+    }
+    flashesWrap.appendChild(div);
+  });
+
+  const flashEls = [...flashesWrap.children];
+  const words = [...CONFIG.ARCHIVE_WORDS]; // ["IDEATE.", "BUILD.", "BREAK.", "FIX.", "SHIP."]
+
+  const tl = gsap.timeline({
+    onComplete: () => {
+      canAdvance = true;
+      autoAdvanceLock = false;
+      hintEl.style.opacity = 0.6;
+    }
+  });
+
+  const FLASH_DURATION = 0.82;
+
+  // Staggered photo + single-slot word beats
+  words.forEach((word, i) => {
+    const flash = flashEls[i];
+    const beatStart = i * FLASH_DURATION;
+
+    // Flash image animate in / out
+    if (flash) {
+      const img = flash.querySelector('img, .ph');
+      tl.set(flash, { opacity: 1, zIndex: 1 }, beatStart)
+        .fromTo(img, { scale: 1.15 }, { scale: 1, duration: FLASH_DURATION, ease: 'none' }, beatStart)
+        .set(flash, { opacity: 0 }, beatStart + FLASH_DURATION);
+    }
+
+    // Explicitly update the SINGLE text element (zero overlapping possible)
+    tl.call(() => {
+      punchText.className = 'archive-word';
+      punchText.textContent = word;
+    }, null, beatStart + 0.1)
+      .fromTo(punchText, 
+        { opacity: 0, scale: 0.88 }, 
+        { opacity: 1, scale: 1, duration: 0.25, ease: 'power2.out' }, 
+        beatStart + 0.1
+      )
+      .to(punchText, 
+        { opacity: 0, scale: 1.06, duration: 0.2, ease: 'power2.in' }, 
+        beatStart + FLASH_DURATION - 0.15
+      );
+  });
+
+  // Final punch: blackout silence pause, then "SURVIVE." slams in!
+  const finalStart = words.length * FLASH_DURATION + 0.35;
+  const finalFlash = flashEls[words.length]; // 6th image if present
+
+  if (finalFlash) {
+    const img = finalFlash.querySelector('img, .ph');
+    tl.set(finalFlash, { opacity: 0.35, zIndex: 1 }, finalStart)
+      .fromTo(img, { scale: 1.1 }, { scale: 1, duration: 3.2, ease: 'sine.out' }, finalStart);
+  }
+
+  tl.call(() => {
+    punchText.className = 'archive-word ember';
+    punchText.textContent = CONFIG.ARCHIVE_FINAL_WORD;
+  }, null, finalStart + 0.1)
+    .fromTo(punchText, 
+      { opacity: 0, scale: 0.76, filter: 'blur(10px)' }, 
+      { opacity: 1, scale: 1, filter: 'blur(0px)', duration: 0.6, ease: 'back.out(1.15)' }, 
+      finalStart + 0.1
+    )
+    .to(punchText, {
+      textShadow: '0 0 50px rgba(255,107,26,0.85), 0 0 120px rgba(255,107,26,0.45)',
+      duration: 1.2,
+      yoyo: true,
+      repeat: 1,
+      ease: 'sine.inOut'
+    }, finalStart + 0.7)
+    .to({}, { duration: 2.6 }); // hold before allowing advance
+}
+
+/* ---------------- SCENE 4: THE REWARD / VAULT ---------------- */
+function sceneReward() {
+  hintEl.style.opacity = 0.6;
+  const glow = document.getElementById('rewardGlow');
+  const artifact = document.getElementById('rewardArtifact');
+  const text = document.getElementById('rewardText');
+  const btn = document.getElementById('openBtn');
+
+  gsap.set(glow, { opacity: 0 });
+  gsap.set(artifact, { opacity: 0, y: 20 });
+  gsap.set(text, { opacity: 0 });
+  gsap.set(btn, { opacity: 0 });
+
+  // idle bob
+  gsap.to(artifact, {
+    y: '+=6', duration: 2.4, ease: 'sine.inOut', yoyo: true, repeat: -1, delay: 1
+  });
+
+  const tl = gsap.timeline({
+    onComplete: () => { canAdvance = true; }
+  });
+  tl.to(artifact, { opacity: 1, y: 0, duration: 1.0, ease: 'power2.out' })
+    .to(glow, { opacity: 0.6, duration: 1.2, ease: 'power1.out' }, '-=0.5')
+    .to(text, { opacity: 1, duration: 0.7 }, '-=0.2')
+    .to(btn, { opacity: 1, duration: 0.6 }, '+=0.2')
+    .to({}, { duration: 0.5 });
+
+  btn.onclick = (e) => {
+    e.stopPropagation();
+    goToScene(4); // -> scene-reveal
+  };
+}
+
+/* ---------------- SCENE 5: THE REVEAL & GLITCH ---------------- */
+function sceneReveal() {
+  hintEl.style.opacity = 0;
+  autoAdvanceLock = true;
+  const wrap = document.getElementById('revealGlitchWrap');
+  const glow = document.getElementById('revealGlow');
+  const flap = document.getElementById('revealFlap');
+  const text = document.getElementById('revealText');
+  const freeze = document.getElementById('freeze-flash');
+
+  wrap.classList.remove('glitch-active');
+  gsap.set(glow, { opacity: 0 });
+  gsap.set(flap, { rotateX: 0, transformOrigin: '50% 0%' });
+  gsap.set(text, { opacity: 0 });
+  gsap.set(freeze, { opacity: 0 });
+
+  const tl = gsap.timeline();
+
+  // artifact opens, light bursts
+  tl.to(flap, { attr: { d: 'M10 40 L100 -10 L190 40' }, duration: 1.2, ease: 'power2.inOut' })
+    .to(glow, { opacity: 0.95, scale: 1.18, duration: 1.2, ease: 'power1.out' }, '<')
+    .to(text, { opacity: 1, duration: 0.6 }, '-=0.4')
+    .to(text, { opacity: 1, duration: 0.9 })
+    // GLITCH jitter moment (~220ms)
+    .call(() => wrap.classList.add('glitch-active'))
+    .to({}, { duration: 0.22 })
+    .call(() => wrap.classList.remove('glitch-active'))
+    // snap to pitch black
+    .to(freeze, { opacity: 1, duration: 0.08, ease: 'power4.in' })
+    .to({}, { duration: 1.1 })
+    .call(() => {
+      goToScene(5, { instant: true }); // -> scene-twist, hard cut
+      gsap.set(freeze, { opacity: 1 });
+      gsap.to(freeze, { opacity: 0, duration: 0.45, delay: 0.05 });
+    });
+}
+
+/* ---------------- SCENE 6: THE TWIST ---------------- */
+function sceneTwist() {
+  hintEl.style.opacity = 0.6;
+  const t1 = document.getElementById('twistText1');
+  const t2 = document.getElementById('twistText2');
+  gsap.set(t1, { opacity: 0, display: 'block' });
+  gsap.set(t2, { opacity: 0, display: 'none' });
+
+  const tl = gsap.timeline({ onComplete: () => { canAdvance = true; } });
+  tl.to(t1, { opacity: 1, duration: 0.8, ease: 'power2.out' })
+    .to(t1, { opacity: 1, duration: 2.2 })
+    .to(t1, { opacity: 0, duration: 0.45 })
+    .set(t1, { display: 'none' })
+    .set(t2, { display: 'block' })
+    .to(t2, { opacity: 1, duration: 0.8, ease: 'power2.out' })
+    .to(t2, { opacity: 1, duration: 1.8 });
+}
+
+/* ---------------- SCENE 7: THE BAIT (SECRET FEEDBACK FORM) ---------------- */
+function sceneFeedback() {
+  if (feedbackDone()) {
+    goToScene(7, { instant: true });
+    return;
+  }
+  hintEl.style.opacity = 0;
+  const l1 = document.getElementById('fbLine1');
+  const l2 = document.getElementById('fbLine2');
+  const sub = document.getElementById('fbSub');
+  const qr = document.getElementById('fbQr');
+  const cap = document.getElementById('fbCaption');
+  const btn = document.getElementById('fbSubmitBtn');
+  const wink = document.getElementById('fbWink');
+
+  gsap.set([l1, l2, sub, qr, cap, btn, wink], { opacity: 0 });
+
+  const tl = gsap.timeline();
+  tl.to(l1, { opacity: 1, duration: 0.6 })
+    .to(l2, { opacity: 1, duration: 0.8, ease: 'power2.out' }, '+=0.2')
+    .to(sub, { opacity: 1, duration: 0.6 }, '+=0.3')
+    .to(qr, { opacity: 1, duration: 0.85 }, '+=0.3')
+    .to(cap, { opacity: 1, duration: 0.5 }, '-=0.2')
+    .to(btn, { opacity: 1, duration: 0.6 }, '+=0.4');
+
+  autoAdvanceLock = true;
+
+  btn.onclick = (e) => {
+    e.stopPropagation();
+    if (btn.dataset.confessed) return;
+    btn.dataset.confessed = '1';
+    localStorage.setItem('hackober_feedbackDone', 'true');
+
+    gsap.timeline()
+      .to(btn, { opacity: 0, duration: 0.3 })
+      .to(wink, { opacity: 1, duration: 0.6, ease: 'power2.out' })
+      .to(wink, { opacity: 1, duration: 2.6 }) // hold for comic timing
+      .call(() => {
+        autoAdvanceLock = false;
+        goToScene(7); // -> scene-unlocked
+      });
+  };
+}
+
+/* ---------------- SCENE 8: REWARD UNLOCKED ---------------- */
+function sceneUnlocked() {
+  hintEl.style.opacity = 0.6;
+  const glow = document.getElementById('unlockedGlow');
+  const flap = document.getElementById('unlockedFlap');
+  const t1 = document.getElementById('unlockedText1');
+  const t2 = document.getElementById('unlockedText2');
+
+  gsap.set(glow, { opacity: 0.4 });
+  gsap.set(flap, { attr: { d: 'M10 40 L100 40 L190 40' } });
+  gsap.set(t1, { opacity: 0 });
+  gsap.set(t2, { opacity: 0 });
+
+  const tl = gsap.timeline({ onComplete: () => { canAdvance = true; } });
+  tl.to(flap, { attr: { d: 'M10 40 L100 -10 L190 40' }, duration: 1.0, ease: 'power2.out' })
+    .to(glow, { opacity: 1, duration: 1.0 }, '<')
+    .to(t1, { opacity: 1, duration: 0.7 }, '-=0.3')
+    .to(t2, { opacity: 1, duration: 0.7 }, '+=0.2')
+    .to(t2, { opacity: 1, duration: 2.2 });
+}
+
+/* ---------------- SCENE 9: THE TEASE ---------------- */
+function sceneTease() {
+  hintEl.style.opacity = 0.6;
+  const t1 = document.getElementById('teaseText1');
+  const t2 = document.getElementById('teaseText2');
+  gsap.set(t1, { opacity: 0, display: 'block' });
+  gsap.set(t2, { opacity: 0, display: 'none' });
+
+  const tl = gsap.timeline({ onComplete: () => { canAdvance = true; } });
+  tl.to(t1, { opacity: 1, duration: 0.8, ease: 'power2.out' })
+    .to(t1, { opacity: 1, duration: 2.2 })
+    .to(t1, { opacity: 0, duration: 0.5 })
+    .set(t1, { display: 'none' })
+    .set(t2, { display: 'block' })
+    .to(t2, { opacity: 1, duration: 0.8, ease: 'power2.out' })
+    .to(t2, { opacity: 1, duration: 2.0 });
+}
+
+/* ---------------- SCENE 10: FINAL FRAME ---------------- */
+function sceneFinal() {
+  hintEl.style.opacity = 0;
+  autoAdvanceLock = true;
+  const logo = document.getElementById('finalLogo');
+  const l1 = document.getElementById('finalLine1');
+  const l2 = document.getElementById('finalLine2');
+  const ig = document.getElementById('finalIgLink');
+  const footer = document.querySelector('.final-footer');
+
+  gsap.set([logo, l1, l2, ig, footer], { opacity: 0 });
+
+  gsap.timeline()
+    .to(logo, { opacity: 1, duration: 1, ease: 'power2.out' })
+    .to(l1, { opacity: 1, duration: 0.7 }, '+=0.3')
+    .to(l2, { opacity: 1, duration: 0.8, ease: 'power2.out' }, '+=0.2')
+    .to(ig, { opacity: 1, duration: 0.7 }, '+=0.3')
+    .to(footer, { opacity: 1, duration: 0.8 }, '-=0.2');
+}
+
+/* ---------------- BOOT ---------------- */
+(function boot(){
+  const hashScene = getHashScene();
+  if (hashScene !== null) {
+    document.getElementById(SCENES[0]).classList.remove('active');
+    currentIndex = hashScene;
+    document.getElementById(SCENES[hashScene]).classList.add('active');
+    updateProgress(hashScene);
+    runSceneEntrance(SCENES[hashScene]);
+  } else {
+    document.getElementById(SCENES[0]).classList.add('active');
+    updateProgress(0);
+    runSceneEntrance(SCENES[0]);
+  }
+})();
+</script>
+</body>
+</html>
