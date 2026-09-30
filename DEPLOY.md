@@ -51,3 +51,10 @@ The QR shown on the last lock is `assets/feedback-qr.png` (your image, unchanged
 * **After the feedback form**: the last word slams in with a stronger shake, five rings, bigger confetti and a heavier vibration pattern.
 * **Team card reveal**: the card flies in, overshoots and glows, with rings and a strong buzz.
 * Vibration works on Android Chrome only (iPhones ignore it; the animations still play), and only after the person's first tap on the page. The duration is `ms` in `surge({...})` in `index.html`.
+
+## 9. Team size and names on the card
+* Team size is **2 to 4** people, the lead included (`MIN_TEAM` / `MAX_TEAM` in `CONFIG`).
+* The **lead types their own name** when creating the team. Each **teammate types their own name** after joining.
+* Because there is no server, names travel by QR: a teammate's **name pass** (shown in their waiting room) is scanned by the lead, and the lead's **finish code** then carries the lead's name and every teammate's name to all phones. Every card shows **Team lead + Members**.
+* A teammate's own name is always on their own card, even if the lead never scanned their pass.
+* Names are shown in full on the phone that typed them. Inside a QR, each name is limited to about 36 characters (longer ones get a "..."), which keeps the codes easy to scan. All of this was checked with OpenCV and jsQR, including worst-case very long names.

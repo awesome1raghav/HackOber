@@ -72,8 +72,9 @@
     padding:calc(env(safe-area-inset-top) + 76px) 24px calc(env(safe-area-inset-bottom) + 44px);
     overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;scrollbar-width:none;-ms-overflow-style:none}
   .scene::-webkit-scrollbar{width:0;height:0;display:none}
-  .scene>:first-child{margin-top:auto}
-  .scene>:last-child{margin-bottom:auto}
+  /* true vertical centering on every screen, independent of which children are visible; content taller than the screen simply scrolls */
+  .scene::before{content:'';flex:none;margin-top:auto}
+  .scene::after{content:'';flex:none;margin-bottom:auto}
   .scene.on{display:flex;z-index:2}
   .scene.out{display:flex;z-index:1;pointer-events:none;animation:sceneOut .32s ease-in forwards}
   .scene.out>*{animation:none!important}
@@ -203,6 +204,17 @@
   #scanner .row{position:relative;margin-top:1.2rem}
   #scanner .btn{margin-top:0;background:rgba(255,255,255,.14);border-color:rgba(255,255,255,.2);box-shadow:none}
   .qrCard span{font-size:.72rem;letter-spacing:.22em;text-transform:uppercase;color:var(--dim)}
+  #qrFinish canvas{width:min(288px,76vw)!important;height:min(288px,76vw)!important}
+  #qrPass canvas{width:min(200px,54vw)!important;height:min(200px,54vw)!important}
+  .people{width:100%;max-width:360px;margin-top:1.4rem;padding:16px 18px;text-align:left}
+  .people h4{margin:0 0 .6rem;font-size:.68rem;font-weight:600;letter-spacing:.26em;text-transform:uppercase;color:var(--dim);display:flex;justify-content:space-between;align-items:center}
+  .people h4 b{color:var(--orange);font-weight:700;letter-spacing:.06em}
+  .pplRow{display:flex;align-items:center;gap:10px;padding:.5em 0;border-top:1px solid var(--line);font-size:1rem;font-weight:500;overflow-wrap:anywhere}
+  .pplRow:first-of-type{border-top:0}
+  .pplRow i{flex:none;width:9px;height:9px;border-radius:50%;background:var(--line)}
+  .pplRow.on i{background:var(--g-green)}
+  .pplRow small{margin-left:auto;font-size:.66rem;letter-spacing:.2em;text-transform:uppercase;color:var(--dim);flex:none}
+  .pplRow.empty{color:var(--dim);font-weight:400}
   .tiles{display:flex;gap:10px;margin-top:1.6rem}
   .tile{width:84px;padding:16px 8px 12px;border-radius:18px;border:1px dashed rgba(17,17,18,.2);background:rgba(255,255,255,.5);display:flex;flex-direction:column;align-items:center;gap:8px;animation:tileGlow 3.2s ease-in-out infinite}
   .tile:nth-child(2){animation-delay:.5s}.tile:nth-child(3){animation-delay:1s}
@@ -574,9 +586,13 @@
       <textarea class="inp" id="teamName" rows="1" placeholder="Type it here" autocomplete="off" autocapitalize="words" spellcheck="false"></textarea>
     </div>
     <div class="field">
+      <label for="leadName">Your name (team lead)</label>
+      <textarea class="inp" id="leadName" rows="1" placeholder="Type your name" autocomplete="off" autocapitalize="words" spellcheck="false"></textarea>
+    </div>
+    <div class="field">
       <label>Team size</label>
       <div class="stepper"><button id="szMinus" aria-label="Fewer people">−</button><div id="szNum">4</div><button id="szPlus" aria-label="More people">+</button></div>
-      <small style="text-align:center">People, including you.</small>
+      <small style="text-align:center">People, including you. Up to 4.</small>
     </div>
     <div class="err" id="createErr"></div>
     <button class="btn" id="createGo" style="margin-top:.4rem">Create team <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
@@ -589,7 +605,9 @@
     <div id="codeBig"></div>
     <div class="card qrCard"><div class="qrBox" id="qrJoin"></div><span>Teammates scan to join</span></div>
     <div class="row"><button class="btn sm ghost" id="shareJoin">Share invite</button><button class="btn sm ghost" id="copyCode">Copy code</button></div>
-    <p class="lead" style="max-width:32ch;margin-top:1.2rem;font-size:.95rem">Only you play the vault. Everyone else unlocks their own card at the end.</p>
+    <div class="card people"><h4><span>Your team</span><b id="rosterCount"></b></h4><div id="roster"></div></div>
+    <button class="btn orange sm" id="scanPass" style="margin-top:1rem"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8V6a2 2 0 012-2h2M16 4h2a2 2 0 012 2v2M20 16v2a2 2 0 01-2 2h-2M8 20H6a2 2 0 01-2-2v-2M4 12h16"/></svg> Scan a teammate's name pass</button>
+    <p class="lead" style="max-width:34ch;margin-top:1rem;font-size:.92rem">Teammates scan the QR and type their name. Then they show you their <b>name pass</b> so it lands on the team card. Only you play the vault.</p>
     <button class="btn" id="startVault">Start the vault <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
   </section>
 
@@ -613,12 +631,28 @@
     <button class="link" id="joinBack">Back</button>
   </section>
 
+  <!-- MY NAME (teammate) -->
+  <section class="scene" id="s-myname">
+    <p class="eyebrow" id="mnEyebrow">Joining</p>
+    <div id="mnTeam" style="margin-top:.7rem;font-size:1.1rem;font-weight:600;letter-spacing:-.01em;max-width:24ch;overflow-wrap:anywhere;color:var(--orange)"></div>
+    <h1 class="title">What's your <em>name?</em></h1>
+    <p class="lead">It goes on your team card, so type it the way you want it shown.</p>
+    <div class="field">
+      <label for="myName">Your name</label>
+      <textarea class="inp" id="myName" rows="1" placeholder="Type your name" autocomplete="off" autocapitalize="words" spellcheck="false"></textarea>
+    </div>
+    <div class="err" id="mnErr"></div>
+    <button class="btn" id="mnGo" style="margin-top:.4rem">Continue <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
+  </section>
+
   <!-- WAIT (member) -->
   <section class="scene" id="s-wait">
     <p class="eyebrow" id="waitEyebrow"></p>
     <div id="waitTeam" style="margin-top:.7rem;font-size:1.1rem;font-weight:600;letter-spacing:-.01em;max-width:24ch;overflow-wrap:anywhere;color:var(--orange)"></div>
     <h1 class="title" style="max-width:13ch">Your lead is cracking the vault.</h1>
     <p class="lead">Three games, three locks. When they're through, you unlock your own card with your own feedback.</p>
+    <div class="card qrCard"><div class="qrBox" id="qrPass"></div><span id="passWho">Your name pass</span></div>
+    <p class="lead" style="font-size:.9rem;margin-top:.9rem">Show this to your lead. They scan it so your name lands on the team card.</p>
     <div class="tiles">
       <div class="tile"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="10" rx="3"/><path d="M8 11V8a4 4 0 018 0v3"/></svg><span>Game 1</span></div>
       <div class="tile"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="10" rx="3"/><path d="M8 11V8a4 4 0 018 0v3"/></svg><span>Game 2</span></div>
@@ -655,6 +689,8 @@
     <p class="lead">Your teammates scan this to unlock their last lock. Each person gets their own card.</p>
     <div class="card qrCard"><div class="qrBox" id="qrFinish"></div><span>Finish code for your team</span></div>
     <div class="row"><button class="btn sm ghost" id="shareFinish">Share finish link</button></div>
+    <div class="card people"><h4><span>Names on the card</span><b id="rosterCount2"></b></h4><div id="roster2"></div></div>
+    <button class="btn orange sm" id="scanPass2" style="margin-top:1rem"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8V6a2 2 0 012-2h2M16 4h2a2 2 0 012 2v2M20 16v2a2 2 0 01-2 2h-2M8 20H6a2 2 0 01-2-2v-2M4 12h16"/></svg> Scan a teammate's name pass</button>
     <button class="btn" id="toFinal">Continue to my lock <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
   </section>
 
@@ -759,7 +795,8 @@ const CONFIG = {
   NEXT_TITLE: "The next chapter is already in motion.",
   NEXT_BODY: "Dates and details drop here first. Follow along so you're in the room when we announce it.",
   MESSAGE: ["Ideas", "get a", "little spooky", "because of", "you."],   // one fragment per lock
-  MAX_TEAM: 20
+  MIN_TEAM: 2,                                          // team size range: 2 to 4 people, the lead included
+  MAX_TEAM: 4
 };
 
 /* ---------- helpers ---------- */
@@ -768,7 +805,7 @@ const rand = (a,b) => a + Math.random()*(b-a);
 const clamp = (v,a,b) => Math.min(b,Math.max(a,v));
 const esc = s => String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const KEY = 'hackober_vault_v4';
-const FRESH = () => ({ role:null, team:null, plan:[], locks:[false,false,false,false,false], started:false, finishShown:false, teamDone:false, done:false, pending:false, skipped:false, just:null });
+const FRESH = () => ({ role:null, myName:'', team:null, plan:[], locks:[false,false,false,false,false], started:false, finishShown:false, teamDone:false, done:false, pending:false, skipped:false, just:null });
 let S = FRESH();
 const P = new URLSearchParams(location.search);
 if (P.has('reset')) { try{ localStorage.removeItem(KEY); }catch(e){} }          // testing: index.html?reset
@@ -798,21 +835,26 @@ function planFor(code, ids){
   const a=[...ids]; for(let i=a.length-1;i>0;i--){ const j=Math.floor(rnd()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return a.slice(0,3);
 }
 const siteBase = () => CONFIG.SITE_URL || location.href.split('#')[0].split('?')[0];
-/* The name inside the QR is capped by its *encoded* length (64 chars) so the code stays sparse and easy to scan.
-   The lead always sees the full name; teammates who scan see the (possibly shortened) name. */
-function qrName(name){
-  const chars=[...name]; let out='';
-  for(const ch of chars){ if(encodeURIComponent(out+ch).length>64) return out.replace(/\s+$/,'')+'…'; out+=ch; }
+/* Names inside a QR are capped by their *encoded* length so the code stays sparse and easy to scan (spaces become "+", 1 char each).
+   Everyone always sees full names on their own phone; the QR may carry a shortened copy. */
+const encQ = s => encodeURIComponent(s).replace(/%20/g,'+');
+function qrName(name, budget=40){
+  const clean = String(name||'').replace(/[|]/g,'/').trim(); let out='';
+  for(const ch of [...clean]){ if(encQ(out+ch).length>budget) return out.replace(/\s+$/,'')+'…'; out+=ch; }
   return out;
 }
+const PERSON_BUDGET = 36;
 function inviteLink(done){
-  const t=S.team; return `${siteBase()}?t=${t.code}&s=${t.size||''}&n=${encodeURIComponent(qrName(t.name))}${done?'&d=1':''}`;
+  const t=S.team, roster=(t.roster||[]).map(n=>encQ(qrName(n,PERSON_BUDGET))).join('|');
+  return `${siteBase()}?t=${t.code}&s=${t.size||''}&n=${encQ(qrName(t.name))}&l=${encQ(qrName(t.lead||S.myName,PERSON_BUDGET))}${done && roster?`&r=${roster.replace(/\|/g,'%7C')}`:''}${done?'&d=1':''}`;
 }
+/* a teammate's "name pass": the lead scans it so the name lands on the team card */
+const passLink = () => `${siteBase()}?p=${S.team.code}&m=${encQ(qrName(S.myName,PERSON_BUDGET))}`;
 /* Renders a QR onto a canvas with whole-pixel modules and a 4-module quiet zone (the spec), so every scanner reads it. */
-function drawQR(el,text){
+function drawQR(el,text,level){
   el.innerHTML='';
   try{
-    const tmp=document.createElement('div'), q=new QRCode(tmp,{text,width:64,height:64,colorDark:'#000',colorLight:'#fff',correctLevel:QRCode.CorrectLevel.M});
+    const tmp=document.createElement('div'), q=new QRCode(tmp,{text,width:64,height:64,colorDark:'#000',colorLight:'#fff',correctLevel:level||QRCode.CorrectLevel.M});
     const m=q._oQRCode, n=m.getModuleCount(), quiet=4, px=Math.max(6,Math.ceil(900/(n+quiet*2))), size=(n+quiet*2)*px;
     const c=document.createElement('canvas'); c.width=c.height=size; const g=c.getContext('2d'); g.fillStyle='#fff'; g.fillRect(0,0,size,size); g.fillStyle='#111112';
     for(let r=0;r<n;r++) for(let k=0;k<n;k++) if(m.isDark(r,k)) g.fillRect((k+quiet)*px,(r+quiet)*px,px,px);
@@ -823,17 +865,37 @@ function drawQR(el,text){
 /* ---------- invites: parse whatever a QR contains, then apply it ---------- */
 function parseInviteText(text){
   text = String(text||'').trim(); let sp;
-  try{ sp = new URL(text).searchParams; }catch(e){ const c=normCode(text); return validCode(c) ? {code:c,name:'',size:null,fin:false} : null; }
+  try{ sp = new URL(text).searchParams; }catch(e){ const c=normCode(text); return validCode(c) ? {code:c,name:'',size:null,fin:false,lead:'',roster:[]} : null; }
+  if(sp.has('p')){ const code=normCode(sp.get('p')); const who=(sp.get('m')||'').trim(); return validCode(code) && who ? { pass:true, code, who } : null; }     // a teammate's name pass
   const code = normCode(sp.get('t')); if(!validCode(code)) return null;
-  return { code, name:(sp.get('n')||'').trim(), size:parseInt(sp.get('s'),10)||null, fin:sp.get('d')==='1' };
+  const roster = (sp.get('r')||'').split('|').map(s=>s.trim()).filter(Boolean).slice(0,CONFIG.MAX_TEAM-1);
+  return { code, name:(sp.get('n')||'').trim(), size:parseInt(sp.get('s'),10)||null, fin:sp.get('d')==='1', lead:(sp.get('l')||'').trim(), roster };
 }
 function applyInvite(inv){
+  if(inv.pass) return S.role==='lead' ? addRoster(inv.code, inv.who) : 'notlead';
   const same = S.team && S.team.code===inv.code;
   if(S.role==='lead' && S.team && !same) return 'ignored';          // a lead is never pulled into another team by a stray code
   if(!same) joinTeam(inv.code, inv.name || 'Your team', inv.size);
   else if(inv.name && S.team.name==='Your team') S.team.name = inv.name;
+  if(S.role==='member'){ if(inv.lead) S.team.lead = inv.lead; if(inv.roster && inv.roster.length) S.team.roster = inv.roster; }   // the finish code carries everyone's names
   if(inv.fin && S.role==='member' && !S.teamDone) markTeamDone();
   save(); return 'ok';
+}
+/* lead only: add a teammate's name from their pass. Returns 'added' | 'dup' | 'full' | 'wrong' */
+function addRoster(code, who){
+  if(S.role!=='lead' || !S.team || S.team.code!==code) return 'wrong';
+  who = String(who).replace(/\s+/g,' ').replace(/[|]/g,'/').trim().replace(/…$/,'');
+  const r = S.team.roster = S.team.roster || [];
+  if(r.some(n=>n.toLowerCase()===who.toLowerCase()) || who.toLowerCase()===(S.team.lead||'').toLowerCase()) return 'dup';
+  if(r.length >= (S.team.size||CONFIG.MAX_TEAM)-1) return 'full';
+  r.push(who); save(); track('name_added'); return 'added';
+}
+/* everyone on the card: the lead first, then teammates (a teammate's own name is always included on their own phone) */
+function cardPeople(){
+  const t=S.team||{}, lead=(t.lead||'').trim(), members=[...(t.roster||[])];
+  const me=(S.myName||'').trim(), has=n=>members.some(m=>m.toLowerCase()===n.toLowerCase()) || n.toLowerCase()===lead.toLowerCase();
+  if(S.role==='member' && me && !has(me)) members.push(me);
+  return { lead, members };
 }
 
 /* ---------- in-app QR scanner: native BarcodeDetector where available, jsQR everywhere else ---------- */
@@ -884,8 +946,10 @@ async function openScanner(onInvite){
 function handleScanned(inv){
   const r = applyInvite(inv);
   if(r==='ignored'){ toast('You already lead a different team on this phone.'); return; }
+  if(r==='notlead'){ toast("That's a teammate's name pass. Your lead scans it."); return; }
+  if(r==='wrong'){ toast('That pass belongs to a different team.'); return; }
   sfx.unlock(); buzz([25,35,25]);
-  go(S.role==='member' && S.teamDone ? 'vault' : 'wait');
+  go(resumeScene());                                                   // teammates without a name go to the name screen first
 }
 function toast(msg){ const t=$('#toast'); t.textContent=msg; t.classList.add('on'); clearTimeout(toast.t); toast.t=setTimeout(()=>t.classList.remove('on'),2200); }
 async function share(url,text){
@@ -949,7 +1013,7 @@ addEventListener('visibilitychange', () => { if(document.visibilityState==='visi
 setInterval(syncClock, 5*60*1000);
 
 /* ---------- scene engine ---------- */
-const SCENES = ['gate','role','create','teamcode','join','wait','vault','game','teamdone','final','finale'];
+const SCENES = ['gate','role','create','teamcode','join','myname','wait','vault','game','teamdone','final','finale'];
 const HUD_SCENES = ['vault','game','teamdone','final'];
 let cleanups = [], current = null, popIdx = -1, game = null, guarded = false;
 const enter = {};
@@ -961,6 +1025,7 @@ function backTarget(){
     case 'create':   return { to: S.role==='lead' && S.team && !S.started ? 'teamcode' : 'role' };
     case 'teamcode': return { to:'create' };                                  // edit the name or size, the team code stays the same
     case 'join':     return { to:'role' };
+    case 'myname':   return { to:'role', leave:true };
     case 'wait':     return { to:'role', leave:true };
     case 'game':     return game && game.practice ? { to:'wait' } : null;    // a real game is never abandoned by accident
     case 'final':    return S.role==='lead' && S.team && S.team.size>1 ? { to:'teamdone' } : null;
@@ -1061,7 +1126,7 @@ function unlock(i){
 function resumeScene(){
   if(S.done) return 'finale';
   if(S.role==='lead')   return !S.team ? 'role' : !S.started ? 'teamcode' : 'vault';
-  if(S.role==='member') return S.teamDone ? 'vault' : 'wait';
+  if(S.role==='member') return !S.myName ? 'myname' : S.teamDone ? 'vault' : 'wait';
   return 'role';
 }
 /* remaining time split into calendar months, days, hours, minutes, seconds */
@@ -1111,27 +1176,30 @@ enter.role = () => {
    ===================================================================== */
 let draftSize = 4;
 enter.create = () => {
-  const ta = $('#teamName'), num = $('#szNum'), minus = $('#szMinus'), plus = $('#szPlus'), err = $('#createErr');
-  if(!ta.dataset.grow){ ta.dataset.grow='1'; autoGrow(ta); }
-  const editing = S.role==='lead' && !!S.team && !S.started;   // came back from the team code screen: change name/size, keep the code
-  if(editing){ ta.value = S.team.name; draftSize = S.team.size; ta.dispatchEvent(new Event('input')); }
+  const ta = $('#teamName'), lead = $('#leadName'), num = $('#szNum'), minus = $('#szMinus'), plus = $('#szPlus'), err = $('#createErr');
+  [ta,lead].forEach(el=>{ if(!el.dataset.grow){ el.dataset.grow='1'; autoGrow(el); } });
+  const editing = S.role==='lead' && !!S.team && !S.started;   // came back from the team code screen: change names/size, keep the code
+  if(editing){ ta.value = S.team.name; lead.value = S.team.lead || S.myName || ''; draftSize = S.team.size; ta.dispatchEvent(new Event('input')); lead.dispatchEvent(new Event('input')); }
+  draftSize = clamp(draftSize, CONFIG.MIN_TEAM, CONFIG.MAX_TEAM);
   $('#createGo').firstChild.textContent = editing ? 'Update team ' : 'Create team ';
-  const render = pop => { num.textContent = draftSize; minus.disabled = draftSize<=1; plus.disabled = draftSize>=CONFIG.MAX_TEAM; if(pop){ num.classList.remove('pop'); num.offsetWidth; num.classList.add('pop'); } };
+  const render = pop => { num.textContent = draftSize; minus.disabled = draftSize<=CONFIG.MIN_TEAM; plus.disabled = draftSize>=CONFIG.MAX_TEAM; if(pop){ num.classList.remove('pop'); num.offsetWidth; num.classList.add('pop'); } };
   render();
   const hold = (btn, d) => {
-    let t1, t2; const step = () => { const n = clamp(draftSize+d,1,CONFIG.MAX_TEAM); if(n!==draftSize){ draftSize=n; render(true); sfx.tick(draftSize%6); buzz(8); } };
+    let t1, t2; const step = () => { const n = clamp(draftSize+d,CONFIG.MIN_TEAM,CONFIG.MAX_TEAM); if(n!==draftSize){ draftSize=n; render(true); sfx.tick(draftSize%6); buzz(8); } };
     const stop = () => { clearTimeout(t1); clearInterval(t2); };
     btn.onpointerdown = e => { e.preventDefault(); step(); t1=setTimeout(()=>{ t2=setInterval(step,110); },380); };
     ['pointerup','pointerleave','pointercancel'].forEach(ev=>btn.addEventListener(ev,stop)); onClean(stop);
   };
   hold(minus,-1); hold(plus,1);
   $('#createGo').onclick = () => {
-    const name = ta.value.replace(/\s+/g,' ').trim();
-    if(!name){ err.textContent = 'Give your team a name first.'; ta.parentElement.classList.remove('shake'); ta.parentElement.offsetWidth; ta.parentElement.classList.add('shake'); sfx.error(); buzz(60); ta.focus(); return; }
+    const name = ta.value.replace(/\s+/g,' ').trim(), leadName = lead.value.replace(/\s+/g,' ').trim();
+    const bad = (m,el) => { err.textContent = m; el.parentElement.classList.remove('shake'); el.parentElement.offsetWidth; el.parentElement.classList.add('shake'); sfx.error(); buzz(60); el.focus(); };
+    if(!name) return bad('Give your team a name first.', ta);
+    if(!leadName) return bad('Type your own name too.', lead);
     err.textContent='';
-    if(editing){ S.team.name = name; S.team.size = draftSize; save(); track('team_updated'); sfx.tick(); go('teamcode'); return; }
+    if(editing){ S.team.name = name; S.team.size = draftSize; S.team.lead = leadName; S.myName = leadName; S.team.roster = (S.team.roster||[]).slice(0,draftSize-1); save(); track('team_updated'); sfx.tick(); go('teamcode'); return; }
     const code = makeCode();
-    S = Object.assign(FRESH(), { role:'lead', team:{code, name, size:draftSize}, plan:planFor(code, Object.keys(GAMES)) });
+    S = Object.assign(FRESH(), { role:'lead', myName:leadName, team:{code, name, size:draftSize, lead:leadName, roster:[]}, plan:planFor(code, Object.keys(GAMES)) });
     save(); track('team_created'); sfx.unlock(); buzz([25,35,25]); go('teamcode');
   };
 };
@@ -1139,15 +1207,37 @@ enter.create = () => {
 /* =====================================================================
    TEAM CODE (lead): unique code + QR for teammates
    ===================================================================== */
+/* the lead's roster: names arrive by scanning each teammate's name pass */
+function renderRoster(listEl, countEl, btnEl){
+  const t=S.team, r=t.roster||[], need=t.size-1;
+  countEl.textContent = `${1+r.length} of ${t.size}`;
+  let h = `<div class="pplRow on"><i></i>${esc(t.lead)}<small>Lead</small></div>`;
+  for(let i=0;i<need;i++) h += r[i] ? `<div class="pplRow on"><i></i>${esc(r[i])}<small>Added</small></div>` : `<div class="pplRow empty"><i></i>Waiting for teammate ${i+1}</div>`;
+  listEl.innerHTML = h; btnEl.style.display = r.length>=need ? 'none' : 'inline-flex';
+}
+function scanPasses(after){                                        // keeps the camera coming back until the team is complete
+  preloadScanner();
+  const onPass = inv => {
+    if(!inv.pass){ toast("That's a join code. Scan a teammate's name pass."); }
+    else { const st = applyInvite(inv);
+      if(st==='added'){ sfx.found(); buzz([15,25,45]); toast(`${inv.who} added`); after(); }
+      else if(st==='dup') toast(`${inv.who} is already on the team`);
+      else if(st==='full'){ toast('Your team is complete'); after(); return; }
+      else toast('That pass belongs to a different team'); }
+    setTimeout(()=>{ if((current==='teamcode'||current==='teamdone') && (S.team.roster||[]).length < S.team.size-1) openScanner(onPass); }, 750);
+  };
+  openScanner(onPass);
+}
 enter.teamcode = () => {
-  const t = S.team; $('#tcEyebrow').textContent = `Team of ${t.size}${t.size===1?' · playing solo':''}`;
+  const t = S.team; $('#tcEyebrow').textContent = `Team of ${t.size}`;
+  const rr = () => renderRoster($('#roster'), $('#rosterCount'), $('#scanPass')); rr();
+  $('#scanPass').onclick = () => { sfx.tick(); scanPasses(rr); };
   $('#codeBig').textContent = fmtCode(t.code);
   drawQR($('#qrJoin'), inviteLink(false));
   if(location.protocol==='file:' && !CONFIG.SITE_URL) setTimeout(()=>toast('Host this page online so teammates can open the link'),900);
   $('#shareJoin').onclick = () => share(inviteLink(false), `Join my team "${t.name}" on HACKOBER. Code ${fmtCode(t.code)}`);
   $('#copyCode').onclick = async () => { try{ await navigator.clipboard.writeText(fmtCode(t.code)); toast('Code copied'); }catch(e){ toast(fmtCode(t.code)); } };
   $('#startVault').onclick = () => { S.started=true; S.locks[0]=true; S.just=[0]; save(); track('vault_started'); sfx.whoosh(); go('vault'); };
-  if(t.size===1) $('#qrJoin').parentElement.style.display='none'; else $('#qrJoin').parentElement.style.display='inline-flex';
 };
 
 /* =====================================================================
@@ -1165,12 +1255,27 @@ enter.join = () => {
     const bad = m => { err.textContent = m; sfx.error(); buzz(60); ci.parentElement.classList.remove('shake'); ci.parentElement.offsetWidth; ci.parentElement.classList.add('shake'); };
     if(!validCode(code)) return bad("That code doesn't look right. Check it with your lead.");
     if(!name) return bad('Add the team name shown on your lead\'s phone.');
-    joinTeam(code, name, null); sfx.unlock(); buzz([25,35,25]); go('wait');
+    joinTeam(code, name, null); sfx.unlock(); buzz([25,35,25]); go(resumeScene());
   };
 };
 function joinTeam(code, name, size){
-  S = Object.assign(FRESH(), { role:'member', team:{code, name, size}, plan:planFor(code, Object.keys(GAMES)) }); save(); track('joined');
+  S = Object.assign(FRESH(), { role:'member', team:{code, name, size, lead:'', roster:[]}, plan:planFor(code, Object.keys(GAMES)) }); save(); track('joined');
 }
+/* =====================================================================
+   MY NAME (every teammate types their own name)
+   ===================================================================== */
+enter.myname = () => {
+  const ta = $('#myName'), err = $('#mnErr');
+  if(!ta.dataset.grow){ ta.dataset.grow='1'; autoGrow(ta); }
+  $('#mnTeam').textContent = teamName(); ta.value = S.myName || ''; ta.dispatchEvent(new Event('input'));
+  const go1 = () => {
+    const n = ta.value.replace(/\s+/g,' ').replace(/[|]/g,'/').trim();
+    if(!n){ err.textContent = 'Type your name to continue.'; ta.parentElement.classList.remove('shake'); ta.parentElement.offsetWidth; ta.parentElement.classList.add('shake'); sfx.error(); buzz(60); ta.focus(); return; }
+    err.textContent=''; S.myName = n; save(); track('member_named'); sfx.unlock(); buzz([25,35,25]); go(resumeScene());
+  };
+  $('#mnGo').onclick = go1; ta.onkeydown = e => { if(e.key==='Enter'){ e.preventDefault(); go1(); } };
+  setTimeout(()=>ta.focus(), 700);
+};
 function markTeamDone(){ S.teamDone = true; S.locks = [true,true,true,true,S.locks[4]]; S.just = [0,1,2,3]; save(); track('team_done_seen'); }
 
 /* =====================================================================
@@ -1178,6 +1283,7 @@ function markTeamDone(){ S.teamDone = true; S.locks = [true,true,true,true,S.loc
    ===================================================================== */
 enter.wait = () => {
   $('#waitEyebrow').textContent = `Team ${fmtCode(S.team.code)}`; $('#waitTeam').textContent = teamName();
+  drawQR($('#qrPass'), passLink()); $('#passWho').textContent = `Name pass · ${S.myName}`;
   $('#leadDone').onclick = () => askSheet({title:'Did your lead finish?', body:'Only tap yes once your lead has cracked all three locks. Scanning their finish code is the best way in.', yes:'Yes, they did', no:'Not yet',
     onYes:()=>{ markTeamDone(); sfx.unlock(); go('vault'); }});
   preloadScanner();
@@ -1726,7 +1832,11 @@ GAMES.match = { title:'Match the pairs.', hint:'Flip two cards at a time and fin
    TEAM DONE (lead): finish code for teammates
    ===================================================================== */
 enter.teamdone = () => {
-  drawQR($('#qrFinish'), inviteLink(true)); track('vault_cracked');
+  // the finish code carries everyone's names (level L keeps it sparse enough to scan easily); it redraws whenever a name is added
+  const draw = () => drawQR($('#qrFinish'), inviteLink(true), QRCode.CorrectLevel.L);
+  const rr = () => { renderRoster($('#roster2'), $('#rosterCount2'), $('#scanPass2')); draw(); }; rr();
+  $('#scanPass2').onclick = () => { sfx.tick(); scanPasses(rr); };
+  track('vault_cracked');
   $('#shareFinish').onclick = () => share(inviteLink(true), `We cracked the HACKOBER vault. Open this to unlock your own card: `);
   $('#toFinal').onclick = () => { S.finishShown = true; save(); go('final'); };
 };
@@ -1842,15 +1952,22 @@ async function makeCard(){
   if(gd){ const w=640, h=w*gd.height/gd.width; x.drawImage(gd,(W-w)/2,110,w,h); }
   x.fillStyle='rgba(17,17,18,.6)'; x.font='300 30px Outfit, sans-serif'; ls('10px'); x.fillText("GOOGLE DEVELOPER'S DAY",W/2,290);
   if(wm){ const w=900, h=w*wm.height/wm.width; x.drawImage(wm,(W-w)/2,340,w,h); }
-  ls('7px'); x.fillStyle='rgba(17,17,18,.6)'; x.font='300 26px Outfit, sans-serif'; x.fillText('WHERE IDEAS GET A LITTLE SPOOKY.',W/2,590); ls('0px');
-  x.fillStyle='rgba(17,17,18,.5)'; x.font='500 26px Outfit, sans-serif'; ls('8px'); x.fillText(S.team && S.team.size ? `TEAM OF ${S.team.size}` : 'TEAM',W/2,712); ls('0px');
-  const name = teamName() || 'Team', maxW = 860, boxH = 280; let fs = 130, lines;
-  for(;fs>=34;fs-=4){ x.font=`700 ${fs}px Outfit, sans-serif`; lines = wrapText(x,name,maxW); if(lines.length*fs*1.05<=boxH) break; }
+  ls('7px'); x.fillStyle='rgba(17,17,18,.6)'; x.font='300 26px Outfit, sans-serif'; x.fillText('WHERE IDEAS GET A LITTLE SPOOKY.',W/2,560); ls('0px');
+  x.fillStyle='rgba(17,17,18,.5)'; x.font='500 26px Outfit, sans-serif'; ls('8px'); x.fillText(S.team && S.team.size ? `TEAM OF ${S.team.size}` : 'TEAM',W/2,636); ls('0px');
+  // team name: shrinks to fit, wraps, no cap on length
+  const name = teamName() || 'Team', maxW = 860, boxH = 150; let fs = 104, lines;
+  for(;fs>=36;fs-=4){ x.font=`700 ${fs}px Outfit, sans-serif`; lines = wrapText(x,name,maxW); if(lines.length*fs*1.05<=boxH) break; }
   x.font=`700 ${fs}px Outfit, sans-serif`; lines = wrapText(x,name,maxW);
-  x.fillStyle='#111112'; const lh=fs*1.05, top=840+(lines.length===1?20:0); lines.forEach((l,i)=>x.fillText(l,W/2,top+i*lh));
-  const yb = Math.max(top+lines.length*lh+60, 1060);
-  x.fillStyle='#f26a0d'; x.fillRect(W/2-50,yb-40,100,5);
-  x.fillStyle='#111112'; x.font='600 44px Outfit, sans-serif'; x.fillText('Ideas get a little spooky because of you.',W/2,yb+20);
+  x.fillStyle='#111112'; const lh=fs*1.05, top=650+fs*.92; lines.forEach((l,i)=>x.fillText(l,W/2,top+i*lh));
+  // the people: team lead first, then every teammate, one line each (a line shrinks to fit, never cut short unless absurdly long)
+  const fitLine = (txt, weight, size, min) => { let s=size; for(;s>min;s-=2){ x.font=`${weight} ${s}px Outfit, sans-serif`; if(x.measureText(txt).width<=maxW) return txt; } x.font=`${weight} ${min}px Outfit, sans-serif`; let t=txt; while(t.length>3 && x.measureText(t+'…').width>maxW) t=t.slice(0,-1); return t===txt?txt:t.trim()+'…'; };
+  const { lead, members } = cardPeople(); let ny = top + (lines.length-1)*lh + 64;
+  const tag = (txt, y) => { x.fillStyle='rgba(17,17,18,.5)'; x.font='500 22px Outfit, sans-serif'; ls('7px'); x.fillText(txt,W/2,y); ls('0px'); };
+  if(lead){ tag('TEAM LEAD',ny); x.fillStyle='#111112'; const t=fitLine(lead,'600',46,26); x.fillText(t,W/2,ny+52); ny += 52; }
+  if(members.length){ tag(members.length>1?'MEMBERS':'MEMBER',ny+58); x.fillStyle='#111112'; members.slice(0,3).forEach((m,i)=>{ const t=fitLine(m,'500',38,24); x.fillText(t,W/2,ny+104+i*46); }); ny += 104+(Math.min(3,members.length)-1)*46; }
+  const yb = Math.min(Math.max(ny+84, 1130), 1170);
+  x.fillStyle='#f26a0d'; x.fillRect(W/2-50,yb-44,100,5);
+  x.fillStyle='#111112'; x.font='600 40px Outfit, sans-serif'; x.fillText('Ideas get a little spooky because of you.',W/2,yb+8);
   x.fillStyle='rgba(17,17,18,.55)'; x.font='400 26px Outfit, sans-serif'; ls('3px'); if(S.team) x.fillText(`TEAM CODE  ${fmtCode(S.team.code)}`,W/2,H-118); ls('0px');
   x.font='400 28px Outfit, sans-serif'; x.fillText(CONFIG.INSTAGRAM_HANDLE,W/2,H-70);
   c.toBlob(blob=>{
@@ -1942,12 +2059,12 @@ async function makeCard(){
     on('#dvLock', ()=>{ setUnlocked(false); render(); });
     on('#dvReset', ()=>{ try{ localStorage.removeItem(KEY); localStorage.removeItem(DEVSTORE); }catch(e){} location.replace(location.pathname); });
     const needOpen = () => { if(isOpen()) return false; $('#dvActMsg').textContent='The vault is still locked. Tap "Open vault now" first.'; $('#dvActMsg').style.color='#fbbc04'; return true; };
-    on('#dvPresetGo', ()=>{ const p=$('#dvPreset').value; if(!p||needOpen()) return; const code=makeCode(), team={code,name:'DEV TEAM',size:4}, plan=planFor(code,Object.keys(GAMES));
-      const P={ fresh:()=>FRESH(), leadTeam:()=>({...FRESH(),role:'lead',team,plan}), leadVault:()=>({...FRESH(),role:'lead',team,plan,started:true,locks:[true,false,false,false,false]}),
-        leadDone:()=>({...FRESH(),role:'lead',team,plan,started:true,locks:[true,true,true,true,false]}), memWait:()=>({...FRESH(),role:'member',team,plan}),
-        memOpen:()=>({...FRESH(),role:'member',team,plan,teamDone:true,locks:[true,true,true,true,false]}), finished:()=>({...FRESH(),role:'lead',team,plan,started:true,locks:[true,true,true,true,true],done:true}) };
+    on('#dvPresetGo', ()=>{ const p=$('#dvPreset').value; if(!p||needOpen()) return; const code=makeCode(), team={code,name:'DEV TEAM',size:4,lead:'Dev Lead',roster:['Asha','Ravi','Meera']}, plan=planFor(code,Object.keys(GAMES));
+      const P={ fresh:()=>FRESH(), leadTeam:()=>({...FRESH(),role:'lead',myName:'Dev Lead',team,plan}), leadVault:()=>({...FRESH(),role:'lead',myName:'Dev Lead',team,plan,started:true,locks:[true,false,false,false,false]}),
+        leadDone:()=>({...FRESH(),role:'lead',myName:'Dev Lead',team,plan,started:true,locks:[true,true,true,true,false]}), memWait:()=>({...FRESH(),role:'member',myName:'Asha',team,plan}),
+        memOpen:()=>({...FRESH(),role:'member',myName:'Asha',team,plan,teamDone:true,locks:[true,true,true,true,false]}), finished:()=>({...FRESH(),role:'lead',myName:'Dev Lead',team,plan,started:true,locks:[true,true,true,true,true],done:true}) };
       S=P[p](); save(); close(); go({fresh:'gate',leadTeam:'teamcode',leadVault:'vault',leadDone:'teamdone',memWait:'wait',memOpen:'vault',finished:'finale'}[p]); });
-    on('#dvGameGo', ()=>{ const g=$('#dvGame').value; if(!g||needOpen()) return; if(!S.team){ const code=makeCode(); S={...FRESH(),role:'member',team:{code,name:'DEV TEAM',size:4},plan:planFor(code,Object.keys(GAMES))}; save(); } close(); startGame(null,g); });
+    on('#dvGameGo', ()=>{ const g=$('#dvGame').value; if(!g||needOpen()) return; if(!S.team){ const code=makeCode(); S={...FRESH(),role:'member',myName:'Dev',team:{code,name:'DEV TEAM',size:4,lead:'Dev Lead',roster:[]},plan:planFor(code,Object.keys(GAMES))}; save(); } close(); startGame(null,g); });
   }
   function open(){ if(dev.classList.contains('on')) return; dev.classList.add('on'); fps='measuring…'; render(); measureFps().then(f=>{ fps=f; if(dev.classList.contains('on')){ const rows=body.querySelectorAll('.r'); rows.forEach(r=>{ if(r.firstChild.textContent==='fps') r.querySelector('em').textContent=f; }); } });
     clearInterval(liveT); liveT=setInterval(()=>{ const a=$('#dvNow'), b=$('#dvLeft'); if(a) a.textContent=iso(nowMs()); if(b) b.textContent=fmtLeft((targetMs()-nowMs())/1000); },1000); }
@@ -1988,7 +2105,8 @@ async function makeCard(){
 /* ---------- boot: handle invite links (?t=CODE&n=Name&s=4[&d=1]) ---------- */
 (async function boot(){
   const inv = parseInviteText(location.search ? location.href : '');
-  if(inv){ applyInvite(inv); try{ history.replaceState(null,'',location.pathname); }catch(e){} }
+  if(inv){ const r = applyInvite(inv); try{ history.replaceState(null,'',location.pathname); }catch(e){}
+    if(inv.pass && r==='added') setTimeout(()=>toast(`${inv.who} added to your team`),1800); }     // a teammate's name pass opened with the phone camera
   await Promise.race([syncClock(), new Promise(r=>setTimeout(r,1500))]);   // know the true time before deciding what to show
   const m = location.hash.match(/s=(\w+)/);       // dev deep link, e.g. index.html#s=role (ignored while the vault is locked)
   if(m && SCENES.includes(m[1]) && m[1]!=='game'){ return go(m[1]); }
