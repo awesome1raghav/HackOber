@@ -183,6 +183,12 @@
   .inp:focus{border-color:var(--orange)}
   .inp.codefield{font-size:2rem;letter-spacing:.18em;text-transform:uppercase;text-align:center}
   .field small{display:block;margin-top:.6rem;color:var(--dim);font-size:.82rem}
+  .field label .opt{letter-spacing:.12em;text-transform:none;opacity:.7;margin-left:.5em}
+  .inp.mid{font-size:1.2rem;letter-spacing:-.01em}
+  .chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:.8rem}
+  .chips button{font:500 .8rem/1 var(--font);padding:.62em 1em;border-radius:999px;border:1px solid var(--line);background:var(--card);color:var(--ink);transition:transform .25s var(--ease),background .25s,color .25s,border-color .25s}
+  .chips button:active{transform:scale(.95)}
+  .chips button.on{background:var(--ink);color:#fff;border-color:var(--ink)}
   .err{color:#c02a2a;font-size:.88rem;min-height:1.3em;margin-top:.7rem}
   .shake{animation:shake .4s}
   @keyframes shake{20%{transform:translateX(-7px)}40%{transform:translateX(6px)}60%{transform:translateX(-4px)}80%{transform:translateX(3px)}}
@@ -615,6 +621,15 @@
       <textarea class="inp" id="leadName" rows="1" placeholder="Type your name" autocomplete="off" autocapitalize="words" spellcheck="false"></textarea>
     </div>
     <div class="field">
+      <label for="leadRole">Your part in the hackathon</label>
+      <textarea class="inp mid" id="leadRole" rows="1" maxlength="32" placeholder="e.g. Full-Stack Developer" autocomplete="off" autocapitalize="words" spellcheck="false"></textarea>
+      <div class="chips" id="leadChips"></div>
+    </div>
+    <div class="field">
+      <label for="leadWork">What you worked on <span class="opt">optional</span></label>
+      <textarea class="inp mid" id="leadWork" rows="1" maxlength="72" placeholder="e.g. Frontend, Backend, System Design" autocomplete="off" autocapitalize="sentences" spellcheck="false"></textarea>
+    </div>
+    <div class="field">
       <label>Team size</label>
       <div class="stepper"><button id="szMinus" aria-label="Fewer people">−</button><div id="szNum">4</div><button id="szPlus" aria-label="More people">+</button></div>
       <small style="text-align:center">People, including you. Up to 4.</small>
@@ -661,10 +676,19 @@
     <p class="eyebrow" id="mnEyebrow">Joining</p>
     <div id="mnTeam" style="margin-top:.7rem;font-size:1.1rem;font-weight:600;letter-spacing:-.01em;max-width:24ch;overflow-wrap:anywhere;color:var(--orange)"></div>
     <h1 class="title">What's your <em>name?</em></h1>
-    <p class="lead">It goes on your team card, so type it the way you want it shown.</p>
+    <p class="lead">Your name and part go on your team card, so type them the way you want them shown.</p>
     <div class="field">
       <label for="myName">Your name</label>
       <textarea class="inp" id="myName" rows="1" placeholder="Type your name" autocomplete="off" autocapitalize="words" spellcheck="false"></textarea>
+    </div>
+    <div class="field">
+      <label for="myRole">Your part in the hackathon</label>
+      <textarea class="inp mid" id="myRole" rows="1" maxlength="32" placeholder="e.g. UI/UX Designer" autocomplete="off" autocapitalize="words" spellcheck="false"></textarea>
+      <div class="chips" id="myChips"></div>
+    </div>
+    <div class="field">
+      <label for="myWork">What you worked on <span class="opt">optional</span></label>
+      <textarea class="inp mid" id="myWork" rows="1" maxlength="72" placeholder="e.g. UI/UX Design, Prototyping" autocomplete="off" autocapitalize="sentences" spellcheck="false"></textarea>
     </div>
     <div class="err" id="mnErr"></div>
     <button class="btn" id="mnGo" style="margin-top:.4rem">Continue <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
@@ -741,7 +765,7 @@
       <p class="lead" id="cardHint" style="display:none;font-size:.9rem;margin-top:1.1rem">Save it to your phone, then hang tight for the winners.</p>
       <button class="btn" id="cardBtn" style="display:none;margin-top:1rem"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v11M7 11l5 5 5-5M5 20h14"/></svg> Download card</button>
       <button class="btn ghost sm" id="shareBtn" style="display:none">Share instead</button>
-      <button class="btn ghost sm" id="liBtn" style="display:none"><svg viewBox="0 0 24 24" fill="currentColor" style="width:15px;height:15px"><path d="M4.98 3.5a2.5 2.5 0 11-.02 5 2.5 2.5 0 01.02-5zM3 9.75h4V21H3V9.75zm6.5 0h3.83v1.54h.06c.53-.95 1.84-1.95 3.78-1.95 4.04 0 4.78 2.55 4.78 5.87V21h-4v-5.1c0-1.22-.02-2.78-1.74-2.78-1.74 0-2 1.33-2 2.7V21h-4V9.75z"/></svg> Share on LinkedIn</button>
+      <button class="btn ghost sm" id="liBtn" style="display:none"><svg viewBox="0 0 24 24" fill="currentColor" style="width:15px;height:15px"><path d="M4.98 3.5a2.5 2.5 0 11-.02 5 2.5 2.5 0 01.02-5zM3 9.75h4V21H3V9.75zm6.5 0h3.83v1.54h.06c.53-.95 1.84-1.95 3.78-1.95 4.04 0 4.78 2.55 4.78 5.87V21h-4v-5.1c0-1.22-.02-2.78-1.74-2.78-1.74 0-2 1.33-2 2.7V21h-4V9.75z"/></svg> Post on LinkedIn</button>
       <div class="card" id="winners" style="display:none"><span class="wdots"><i></i><i></i><i></i></span><p class="eyebrow">Hold tight</p><h3>Winners will be announced shortly.</h3><p>Stay close and keep an eye out. Thanks for playing, it wouldn't have been the same without you.</p></div>
       <div class="card" id="next">
         <p class="eyebrow">What's next</p>
@@ -810,7 +834,7 @@ addEventListener('unhandledrejection', e => devlog('promise', (e.reason && e.rea
 const _ce = console.error; console.error = function(...a){ try{ devlog('console', a.join(' ')); }catch(_){} return _ce.apply(console,a); };
 
 const CONFIG = {
-  VERSION: "4.5",
+  VERSION: "4.6",
   OPENS_AT: "2026-10-01T13:30:00+05:30",               // when the vault opens (India time): 1 Oct 2026, 1:30 pm. Until then the site shows only the wordmark and the timers.
   ROUND1_ENDS_AT: "2026-10-01T13:00:00+05:30",         // round 1 ends (India time): the second timer counts down to it, then says "Round 1 has ended".
   DEV_PIN_HASH: "0360d53e0ef2df7e56f62fceacf612e77c28e2b1591c9079983a7c51803dc6ea",   // SHA-256 of the developer PIN. Change with: python tools/set_dev_pin.py <new pin>
@@ -832,7 +856,7 @@ const rand = (a,b) => a + Math.random()*(b-a);
 const clamp = (v,a,b) => Math.min(b,Math.max(a,v));
 const esc = s => String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const KEY = 'hackober_vault_v4';
-const FRESH = () => ({ role:null, myName:'', team:null, plan:[], locks:[false,false,false,false,false], started:false, finishShown:false, teamDone:false, done:false, pending:false, skipped:false, just:null });
+const FRESH = () => ({ role:null, myName:'', myRole:'', myWork:'', team:null, plan:[], locks:[false,false,false,false,false], started:false, finishShown:false, teamDone:false, done:false, pending:false, skipped:false, just:null });
 let S = FRESH();
 const P = new URLSearchParams(location.search);
 if (P.has('reset')) { try{ localStorage.removeItem(KEY); }catch(e){} }          // testing: index.html?reset
@@ -864,19 +888,58 @@ function planFor(code, ids){
 const siteBase = () => CONFIG.SITE_URL || location.href.split('#')[0].split('?')[0];
 /* Names inside a QR are capped by their *encoded* length so the code stays sparse and easy to scan (spaces become "+", 1 char each).
    Everyone always sees full names on their own phone; the QR may carry a shortened copy. */
-const encQ = s => encodeURIComponent(s).replace(/%20/g,'+');
+const encQ = s => encodeURIComponent(s).replace(/%20/g,'+').replace(/%2C/g,',').replace(/%2F/g,'/').replace(/%3A/g,':');     // commas, slashes and colons are legal in a query, and each one saved keeps the QR sparser
 function qrName(name, budget=40){
   const clean = String(name||'').replace(/[|]/g,'/').trim(); let out='';
   for(const ch of [...clean]){ if(encQ(out+ch).length>budget) return out.replace(/\s+$/,'')+'…'; out+=ch; }
   return out;
 }
 const PERSON_BUDGET = 36;
+/* a role or "what I worked on" for a QR: if it is too long, drop whole trailing items ("A, B, C" becomes "A, B") before ever cutting a word */
+function qrPart(txt, budget){
+  const t=String(txt||'').replace(/[|]/g,'/').trim(); if(encQ(t).length<=budget) return t;
+  let out=''; for(const p of t.split(/,\s*/)){ const nx=out?out+', '+p:p; if(encQ(nx).length>budget) break; out=nx; }
+  return out || qrName(t,budget);
+}
+/* each person's "part in the hackathon": a role (required) and what they worked on (optional). Shown on the team card. */
+const PARTS = [
+  { r:'Full-Stack Developer', w:'Frontend, Backend, System Design' },
+  { r:'Frontend Developer',   w:'UI Development, Responsive Design' },
+  { r:'Backend Developer',    w:'APIs, Databases, Server Logic' },
+  { r:'UI/UX Designer',       w:'UI/UX Design, Prototyping' },
+  { r:'AI / ML Engineer',     w:'Model Building, Data, Integration' },
+  { r:'Presenter',            w:'Pitch Deck, Demo, Documentation' },
+];
+const ROLE_MAX = 32, WORK_MAX = 72, ROLE_QR = 30, WORK_QR = 56;
+const cleanPart = (s,max) => String(s||'').replace(/[|]/g,'/').replace(/\s+/g,' ').trim().slice(0,max);
+const partKey = n => String(n||'').replace(/…$/,'').trim().toLowerCase();
+function partOf(name){                                       // this phone's own answers win; everyone else comes from the team's shared parts
+  const k=partKey(name), mine = S.myRole && partKey(S.myName)===k, p = ((S.team||{}).parts||{})[k];
+  return mine ? { r:S.myRole, w:S.myWork||'' } : (p ? { r:p.r||'', w:p.w||'' } : { r:'', w:'' });
+}
+function setPart(name, r, w){ const t=S.team; if(!t || !name || !r) return; (t.parts = t.parts||{})[partKey(name)] = { r:cleanPart(r,ROLE_MAX+4), w:cleanPart(w,WORK_MAX+4) }; }
+/* quick-pick roles: tapping one fills the role, and a matching "what you worked on" if that is still empty or was filled by an earlier pick */
+function partChips(box, roleEl, workEl){
+  box.innerHTML = PARTS.map((p,i)=>`<button type="button" data-i="${i}">${esc(p.r)}</button>`).join('');
+  const sync = () => [...box.children].forEach((b,i)=>b.classList.toggle('on', roleEl.value.trim().toLowerCase()===PARTS[i].r.toLowerCase()));
+  box.onclick = e => { const b=e.target.closest('button'); if(!b) return; const p=PARTS[+b.dataset.i], w=workEl.value.trim();
+    roleEl.value = p.r; roleEl.dispatchEvent(new Event('input')); if(!w || PARTS.some(q=>q.w===w)){ workEl.value = p.w; workEl.dispatchEvent(new Event('input')); }
+    sfx.tick(); buzz(8); sync(); };
+  roleEl.addEventListener('input', sync); sync();
+}
 function inviteLink(done){
-  const t=S.team, roster=(t.roster||[]).map(n=>encQ(qrName(n,PERSON_BUDGET))).join('|');
-  return `${siteBase()}?t=${t.code}&s=${t.size||''}&n=${encQ(qrName(t.name))}&l=${encQ(qrName(t.lead||S.myName,PERSON_BUDGET))}${done && roster?`&r=${roster.replace(/\|/g,'%7C')}`:''}${done?'&d=1':''}`;
+  const t=S.team, rn=t.roster||[], roster=rn.map(n=>encQ(qrName(n,PERSON_BUDGET))).join('|');
+  let parts='';                                                // the finish code also carries everyone's part (role, what they worked on), in roster order
+  if(done){
+    const L=partOf(t.lead||S.myName), P=rn.map(partOf);
+    if(L.r) parts += `&la=${encQ(qrPart(L.r,ROLE_QR))}${L.w?`&lw=${encQ(qrPart(L.w,WORK_QR))}`:''}`;
+    if(P.some(q=>q.r)) parts += `&ra=${P.map(q=>encQ(qrPart(q.r,ROLE_QR))).join('%7C')}`;
+    if(P.some(q=>q.w)) parts += `&rw=${P.map(q=>encQ(qrPart(q.w,WORK_QR))).join('%7C')}`;
+  }
+  return `${siteBase()}?t=${t.code}&s=${t.size||''}&n=${encQ(qrName(t.name))}&l=${encQ(qrName(t.lead||S.myName,PERSON_BUDGET))}${done && roster?`&r=${roster.replace(/\|/g,'%7C')}`:''}${parts}${done?'&d=1':''}`;
 }
 /* a teammate's "name pass": the lead scans it so the name lands on the team card */
-const passLink = () => `${siteBase()}?p=${S.team.code}&m=${encQ(qrName(S.myName,PERSON_BUDGET))}`;
+const passLink = () => `${siteBase()}?p=${S.team.code}&m=${encQ(qrName(S.myName,PERSON_BUDGET))}${S.myRole?`&a=${encQ(qrPart(S.myRole,ROLE_QR))}`:''}${S.myWork?`&w=${encQ(qrPart(S.myWork,WORK_QR))}`:''}`;
 /* Renders a QR onto a canvas with whole-pixel modules and a 4-module quiet zone (the spec), so every scanner reads it. */
 function drawQR(el,text,level){
   el.innerHTML='';
@@ -893,36 +956,41 @@ function drawQR(el,text,level){
 function parseInviteText(text){
   text = String(text||'').trim(); let sp;
   try{ sp = new URL(text).searchParams; }catch(e){ const c=normCode(text); return validCode(c) ? {code:c,name:'',size:null,fin:false,lead:'',roster:[]} : null; }
-  if(sp.has('p')){ const code=normCode(sp.get('p')); const who=(sp.get('m')||'').trim(); return validCode(code) && who ? { pass:true, code, who } : null; }     // a teammate's name pass
+  if(sp.has('p')){ const code=normCode(sp.get('p')); const who=(sp.get('m')||'').trim(); return validCode(code) && who ? { pass:true, code, who, role:cleanPart(sp.get('a'),ROLE_MAX+4), work:cleanPart(sp.get('w'),WORK_MAX+4) } : null; }     // a teammate's name pass
   const code = normCode(sp.get('t')); if(!validCode(code)) return null;
   const roster = (sp.get('r')||'').split('|').map(s=>s.trim()).filter(Boolean).slice(0,CONFIG.MAX_TEAM-1);
-  return { code, name:(sp.get('n')||'').trim(), size:parseInt(sp.get('s'),10)||null, fin:sp.get('d')==='1', lead:(sp.get('l')||'').trim(), roster };
+  const list = k => (sp.get(k)||'').split('|').map(v=>cleanPart(v,ROLE_MAX+WORK_MAX));
+  return { code, name:(sp.get('n')||'').trim(), size:parseInt(sp.get('s'),10)||null, fin:sp.get('d')==='1', lead:(sp.get('l')||'').trim(), roster,
+    leadRole:cleanPart(sp.get('la'),ROLE_MAX+4), leadWork:cleanPart(sp.get('lw'),WORK_MAX+4), rosterRoles:list('ra'), rosterWork:list('rw') };
 }
 function applyInvite(inv){
-  if(inv.pass) return S.role==='lead' ? addRoster(inv.code, inv.who) : 'notlead';
+  if(inv.pass) return S.role==='lead' ? addRoster(inv.code, inv.who, inv.role, inv.work) : 'notlead';
   const same = S.team && S.team.code===inv.code;
   if(S.role==='lead' && S.team && !same) return 'ignored';          // a lead is never pulled into another team by a stray code
   if(!same) joinTeam(inv.code, inv.name || 'Your team', inv.size);
   else if(inv.name && S.team.name==='Your team') S.team.name = inv.name;
-  if(S.role==='member'){ if(inv.lead) S.team.lead = inv.lead; if(inv.roster && inv.roster.length) S.team.roster = inv.roster; }   // the finish code carries everyone's names
+  if(S.role==='member'){ if(inv.lead) S.team.lead = inv.lead; if(inv.roster && inv.roster.length) S.team.roster = inv.roster;   // the finish code carries everyone's names and parts
+    if(inv.lead && inv.leadRole) setPart(inv.lead, inv.leadRole, inv.leadWork);
+    (inv.roster||[]).forEach((n,i)=>{ if((inv.rosterRoles||[])[i]) setPart(n, inv.rosterRoles[i], (inv.rosterWork||[])[i]||''); }); }
   if(inv.fin && S.role==='member' && !S.teamDone) markTeamDone();
   save(); return 'ok';
 }
 /* lead only: add a teammate's name from their pass. Returns 'added' | 'dup' | 'full' | 'wrong' */
-function addRoster(code, who){
+function addRoster(code, who, role, work){
   if(S.role!=='lead' || !S.team || S.team.code!==code) return 'wrong';
   who = String(who).replace(/\s+/g,' ').replace(/[|]/g,'/').trim().replace(/…$/,'');
   const r = S.team.roster = S.team.roster || [];
-  if(r.some(n=>n.toLowerCase()===who.toLowerCase()) || who.toLowerCase()===(S.team.lead||'').toLowerCase()) return 'dup';
+  if(r.some(n=>n.toLowerCase()===who.toLowerCase()) || who.toLowerCase()===(S.team.lead||'').toLowerCase()){ if(role){ setPart(who, role, work); save(); } return 'dup'; }
   if(r.length >= (S.team.size||CONFIG.MAX_TEAM)-1) return 'full';
-  r.push(who); save(); track('name_added'); return 'added';
+  r.push(who); setPart(who, role, work); save(); track('name_added'); return 'added';
 }
 /* everyone on the card: the lead first, then teammates (a teammate's own name is always included on their own phone) */
 function cardPeople(){
   const t=S.team||{}, lead=(t.lead||'').trim(), members=[...(t.roster||[])];
   const me=(S.myName||'').trim(), has=n=>members.some(m=>m.toLowerCase()===n.toLowerCase()) || n.toLowerCase()===lead.toLowerCase();
   if(S.role==='member' && me && !has(me)) members.push(me);
-  return { lead, members };
+  const all = [lead, ...members.slice(0,3)].filter(Boolean).map((n,i)=>({ n, isLead:i===0 && !!lead, ...partOf(n) }));       // everyone, with their part, ready for the card
+  return { lead, members, all };
 }
 
 /* ---------- in-app QR scanner: native BarcodeDetector where available, jsQR everywhere else ---------- */
@@ -1153,7 +1221,7 @@ function unlock(i){
 function resumeScene(){
   if(S.done) return 'finale';
   if(S.role==='lead')   return !S.team ? 'role' : !S.started ? 'teamcode' : 'vault';
-  if(S.role==='member') return !S.myName ? 'myname' : S.teamDone ? 'vault' : 'wait';
+  if(S.role==='member') return !S.myName || !S.myRole ? 'myname' : S.teamDone ? 'vault' : 'wait';
   return 'role';
 }
 /* remaining time split into calendar months, days, hours, minutes, seconds */
@@ -1218,10 +1286,11 @@ enter.role = () => {
    ===================================================================== */
 let draftSize = 4;
 enter.create = () => {
-  const ta = $('#teamName'), lead = $('#leadName'), num = $('#szNum'), minus = $('#szMinus'), plus = $('#szPlus'), err = $('#createErr');
-  [ta,lead].forEach(el=>{ if(!el.dataset.grow){ el.dataset.grow='1'; autoGrow(el); } });
+  const ta = $('#teamName'), lead = $('#leadName'), role = $('#leadRole'), work = $('#leadWork'), num = $('#szNum'), minus = $('#szMinus'), plus = $('#szPlus'), err = $('#createErr');
+  [ta,lead,role,work].forEach(el=>{ if(!el.dataset.grow){ el.dataset.grow='1'; autoGrow(el); } });
   const editing = S.role==='lead' && !!S.team && !S.started;   // came back from the team code screen: change names/size, keep the code
-  if(editing){ ta.value = S.team.name; lead.value = S.team.lead || S.myName || ''; draftSize = S.team.size; ta.dispatchEvent(new Event('input')); lead.dispatchEvent(new Event('input')); }
+  if(editing){ ta.value = S.team.name; lead.value = S.team.lead || S.myName || ''; role.value = S.myRole || ''; work.value = S.myWork || ''; draftSize = S.team.size; [ta,lead,role,work].forEach(el=>el.dispatchEvent(new Event('input'))); }
+  partChips($('#leadChips'), role, work); [ta,lead,role,work].forEach(el=>el.addEventListener('input',()=>{ err.textContent=''; }));
   draftSize = clamp(draftSize, CONFIG.MIN_TEAM, CONFIG.MAX_TEAM);
   $('#createGo').firstChild.textContent = editing ? 'Update team ' : 'Create team ';
   const render = pop => { num.textContent = draftSize; minus.disabled = draftSize<=CONFIG.MIN_TEAM; plus.disabled = draftSize>=CONFIG.MAX_TEAM; if(pop){ num.classList.remove('pop'); num.offsetWidth; num.classList.add('pop'); } };
@@ -1234,14 +1303,15 @@ enter.create = () => {
   };
   hold(minus,-1); hold(plus,1);
   $('#createGo').onclick = () => {
-    const name = ta.value.replace(/\s+/g,' ').trim(), leadName = lead.value.replace(/\s+/g,' ').trim();
+    const name = ta.value.replace(/\s+/g,' ').trim(), leadName = lead.value.replace(/\s+/g,' ').trim(), myRole = cleanPart(role.value,ROLE_MAX), myWork = cleanPart(work.value,WORK_MAX);
     const bad = (m,el) => { err.textContent = m; el.parentElement.classList.remove('shake'); el.parentElement.offsetWidth; el.parentElement.classList.add('shake'); sfx.error(); buzz(60); el.focus(); };
     if(!name) return bad('Give your team a name first.', ta);
     if(!leadName) return bad('Type your own name too.', lead);
+    if(!myRole) return bad('Tell us your part in the hackathon.', role);
     err.textContent='';
-    if(editing){ S.team.name = name; S.team.size = draftSize; S.team.lead = leadName; S.myName = leadName; S.team.roster = (S.team.roster||[]).slice(0,draftSize-1); save(); track('team_updated'); sfx.tick(); go('teamcode'); return; }
+    if(editing){ if(S.team.parts) delete S.team.parts[partKey(S.team.lead)]; S.team.name = name; S.team.size = draftSize; S.team.lead = leadName; S.myName = leadName; S.myRole = myRole; S.myWork = myWork; setPart(leadName, myRole, myWork); S.team.roster = (S.team.roster||[]).slice(0,draftSize-1); save(); track('team_updated'); sfx.tick(); go('teamcode'); return; }
     const code = makeCode();
-    S = Object.assign(FRESH(), { role:'lead', myName:leadName, team:{code, name, size:draftSize, lead:leadName, roster:[]}, plan:planFor(code, Object.keys(GAMES)) });
+    S = Object.assign(FRESH(), { role:'lead', myName:leadName, myRole, myWork, team:{code, name, size:draftSize, lead:leadName, roster:[], parts:{ [partKey(leadName)]:{ r:myRole, w:myWork } }}, plan:planFor(code, Object.keys(GAMES)) });
     save(); track('team_created'); sfx.unlock(); buzz([25,35,25]); go('teamcode');
   };
 };
@@ -1307,15 +1377,18 @@ function joinTeam(code, name, size){
    MY NAME (every teammate types their own name)
    ===================================================================== */
 enter.myname = () => {
-  const ta = $('#myName'), err = $('#mnErr');
-  if(!ta.dataset.grow){ ta.dataset.grow='1'; autoGrow(ta); }
-  $('#mnTeam').textContent = teamName(); ta.value = S.myName || ''; ta.dispatchEvent(new Event('input'));
+  const ta = $('#myName'), role = $('#myRole'), work = $('#myWork'), err = $('#mnErr');
+  [ta,role,work].forEach(el=>{ if(!el.dataset.grow){ el.dataset.grow='1'; autoGrow(el); } });
+  $('#mnTeam').textContent = teamName(); ta.value = S.myName || ''; role.value = S.myRole || ''; work.value = S.myWork || ''; [ta,role,work].forEach(el=>el.dispatchEvent(new Event('input')));
+  partChips($('#myChips'), role, work); [ta,role,work].forEach(el=>el.addEventListener('input',()=>{ err.textContent=''; }));
   const go1 = () => {
-    const n = ta.value.replace(/\s+/g,' ').replace(/[|]/g,'/').trim();
-    if(!n){ err.textContent = 'Type your name to continue.'; ta.parentElement.classList.remove('shake'); ta.parentElement.offsetWidth; ta.parentElement.classList.add('shake'); sfx.error(); buzz(60); ta.focus(); return; }
-    err.textContent=''; S.myName = n; save(); track('member_named'); sfx.unlock(); buzz([25,35,25]); go(resumeScene());
+    const n = ta.value.replace(/\s+/g,' ').replace(/[|]/g,'/').trim(), r = cleanPart(role.value,ROLE_MAX), w = cleanPart(work.value,WORK_MAX);
+    const bad = (m,el) => { err.textContent = m; el.parentElement.classList.remove('shake'); el.parentElement.offsetWidth; el.parentElement.classList.add('shake'); sfx.error(); buzz(60); el.focus(); };
+    if(!n) return bad('Type your name to continue.', ta);
+    if(!r) return bad('Tell us your part in the hackathon.', role);
+    err.textContent=''; S.myName = n; S.myRole = r; S.myWork = w; save(); track('member_named'); sfx.unlock(); buzz([25,35,25]); go(resumeScene());
   };
-  $('#mnGo').onclick = go1; ta.onkeydown = e => { if(e.key==='Enter'){ e.preventDefault(); go1(); } };
+  $('#mnGo').onclick = go1; [ta,role,work].forEach(el=>el.addEventListener('keydown', e=>{ if(e.key==='Enter'){ e.preventDefault(); go1(); } }));
   setTimeout(()=>ta.focus(), 700);
 };
 function markTeamDone(){ S.teamDone = true; S.locks = [true,true,true,true,S.locks[4]]; S.just = [0,1,2,3]; save(); track('team_done_seen'); }
@@ -1984,104 +2057,103 @@ function wrapText(x, text, maxW){
 }
 /* a ready-to-post LinkedIn caption (copied to the clipboard by the "Share on LinkedIn" button) */
 function linkedInCaption(){
-  const { lead, members } = cardPeople(), t = S.team || {}, who = [lead, ...members].filter(Boolean);
+  const { all } = cardPeople(), t = S.team || {}, who = all.map(p=>p.r ? `${p.n} (${p.r})` : p.n);
   const list = who.length>1 ? who.slice(0,-1).join(', ')+' and '+who[who.length-1] : (who[0]||'');
   return `Our team ${t.name||''} just cracked the vault at HACKOBER, Google Developer's Day by GDG on Campus GRIET.\n\n${list?`The team: ${list}.\n\n`:''}Where ideas get a little spooky.\n\n#HACKOBER #GDGoC #GoogleDevelopersDay #GoogleDeveloperGroups`;
 }
 async function makeCard(){
   try{ await document.fonts.load('700 80px Outfit'); await document.fonts.load('300 30px Outfit'); }catch(e){}
   const [wm, gd] = await Promise.all([loadImg(A.wordmark), loadImg(A.gdg)]);
-  /* ---- "Clean Certificate" LinkedIn card ------------------------------------------------------------
-     A white card floating on a cool grey page, one idea per band: the brand, the team, then one row per person.
+  /* ---- "Poster Clean" LinkedIn card ----------------------------------------------------------------
+     A pure white page, one idea per band: the brand, the team, then one soft row per person with their part in the hackathon.
      Colour theory: neutral white and cool grey (~70%) give the brand orange room to glow; orange (~20%) carries energy and
-     courage and always marks what matters (badges, team code, accents); near-black ink (~10%) is orange's strongest
+     courage and always marks what matters (badges, rules, team code); near-black ink (~10%) is orange's strongest
      contrast, so every name reads instantly and feels trustworthy. A pale peach tint (the orange at low saturation)
-     links pills and tiles to the brand without adding a new hue. */
+     links the pills and icon tiles to the brand without adding a new hue. */
   const W=1080, H=1350, c=document.createElement('canvas'); c.width=W; c.height=H; const x=c.getContext('2d'), ls=v=>{ if('letterSpacing' in x) x.letterSpacing=v; };
-  const C={ ink:'#14171F', gray:'#6B7280', grayLt:'#9AA1AE', line:'#E9ECF1', page:'#EEF0F4', orange:'#F26A0D', orangeHi:'#FF9F2E', peach:'#FDE6CF', peachDeep:'#F8C79A' };
-  const M=30, CX=W/2, PX=60, PW=960;                                                // card margin, centre, panel/row x and width
+  const C={ ink:'#14171F', gray:'#6B7280', line:'#E9ECF1', orange:'#F26A0D', orangeHi:'#FF9F2E', peach:'#FDE6CF' };
+  const CX=W/2, PX=46, PW=W-2*PX;                                                   // centre, row x and row width
   const rr=(px,py,w,h,r)=>{ x.beginPath(); x.moveTo(px+r,py); x.arcTo(px+w,py,px+w,py+h,r); x.arcTo(px+w,py+h,px,py+h,r); x.arcTo(px,py+h,px,py,r); x.arcTo(px,py,px+w,py,r); x.closePath(); };
-  const dots=(x0,y0,cols,rows,gap,col,r=2.4)=>{ x.fillStyle=col; for(let i=0;i<cols;i++) for(let j=0;j<rows;j++){ x.beginPath(); x.arc(x0+i*gap,y0+j*gap,r,0,6.2832); x.fill(); } };
-  const spark=(px,py,r)=>{ x.fillStyle=C.orange; x.beginPath(); x.moveTo(px,py-r); x.quadraticCurveTo(px,py,px+r,py); x.quadraticCurveTo(px,py,px,py+r); x.quadraticCurveTo(px,py,px-r,py); x.quadraticCurveTo(px,py,px,py-r); x.fill(); };
-  const bat=(px,py,s,flip,col)=>{ x.save(); x.translate(px,py); x.scale(flip?-s:s,s); x.fillStyle=col; x.beginPath(); x.moveTo(0,-.1);
-    x.bezierCurveTo(-.2,-.5,-.7,-.55,-1,-.3); x.quadraticCurveTo(-.86,-.08,-.92,.14); x.quadraticCurveTo(-.66,.02,-.54,.3); x.quadraticCurveTo(-.4,.1,-.24,.3); x.quadraticCurveTo(-.12,.18,0,.4);
-    x.quadraticCurveTo(.12,.18,.24,.3); x.quadraticCurveTo(.4,.1,.54,.3); x.quadraticCurveTo(.66,.02,.92,.14); x.quadraticCurveTo(.86,-.08,1,-.3); x.bezierCurveTo(.7,-.55,.2,-.5,0,-.1); x.closePath(); x.fill();
-    x.beginPath(); x.moveTo(-.07,-.18); x.lineTo(-.04,-.34); x.lineTo(0,-.22); x.lineTo(.04,-.34); x.lineTo(.07,-.18); x.closePath(); x.fill(); x.restore(); };
-  const softPumpkin=(cx,cy,sz,a)=>{                         // drawn solid on its own layer, then laid down once at low opacity so overlaps never show seams
-    const T=Math.ceil(sz*2), t=document.createElement('canvas'); t.width=t.height=T; const g=t.getContext('2d'); g.translate(T/2,T/2); g.fillStyle=C.orange;
-    [[-.34,.42,.5],[.34,.42,.5],[0,.46,.54]].forEach(([ox,rx,ry])=>{ g.beginPath(); g.ellipse(ox*sz,0,rx*sz,ry*sz,0,0,6.2832); g.fill(); });
-    g.beginPath(); g.moveTo(-.06*sz,-.48*sz); g.quadraticCurveTo(-.04*sz,-.7*sz,.08*sz,-.78*sz); g.quadraticCurveTo(.15*sz,-.78*sz,.12*sz,-.7*sz); g.quadraticCurveTo(.06*sz,-.62*sz,.07*sz,-.48*sz); g.fill();
-    g.globalCompositeOperation='destination-out'; const poly=pts=>{ g.beginPath(); pts.forEach(([u,v],i)=>{ i?g.lineTo(u*sz,v*sz):g.moveTo(u*sz,v*sz); }); g.closePath(); g.fill(); };
-    poly([[-.32,-.04],[-.08,-.04],[-.2,-.28]]); poly([[.08,-.04],[.32,-.04],[.2,-.28]]); poly([[-.03,.02],[.03,.02],[0,-.06]]);
-    poly([[-.4,.12],[-.22,.34],[-.11,.24],[0,.37],[.11,.24],[.22,.34],[.4,.12],[.22,.2],[0,.25],[-.22,.2]]);
-    x.save(); x.globalAlpha=a; x.drawImage(t,cx-T/2,cy-T/2); x.restore(); };
-  const web=(ox,oy,R,dirX,dirY)=>{ x.save(); x.strokeStyle='rgba(20,23,31,.09)'; x.lineWidth=1.6; for(let a=0;a<=6;a++){ const t=a/6*Math.PI/2; x.beginPath(); x.moveTo(ox,oy); x.lineTo(ox+dirX*Math.cos(t)*R,oy+dirY*Math.sin(t)*R); x.stroke(); }
-    for(let r=1;r<=4;r++){ x.beginPath(); for(let a=0;a<=6;a++){ const t=a/6*Math.PI/2, rr2=R*r/4*(a%2?.92:1); const px=ox+dirX*Math.cos(t)*rr2, py=oy+dirY*Math.sin(t)*rr2; a?x.lineTo(px,py):x.moveTo(px,py); } x.stroke(); } x.restore(); };
+  const ellip=(txt,maxW)=>{ let t=txt; if(x.measureText(t).width<=maxW) return t; while(t.length>1 && x.measureText(t+'…').width>maxW) t=t.slice(0,-1); return t.replace(/[\s,]+$/,'')+'…'; };
   x.textAlign='center'; x.textBaseline='alphabetic';
+  const { all:people } = cardPeople(), n=Math.max(1,people.length);
 
-  // 1. grey page, then the floating white card with a soft, deep shadow
-  x.fillStyle=C.page; x.fillRect(0,0,W,H);
-  x.save(); x.shadowColor='rgba(20,30,50,.16)'; x.shadowBlur=60; x.shadowOffsetY=18; x.fillStyle='#FFFFFF'; rr(M,M,W-2*M,H-2*M,58); x.fill(); x.restore();
-  x.save(); rr(M,M,W-2*M,H-2*M,58); x.clip();
-  const sheen=x.createLinearGradient(0,M,0,M+520); sheen.addColorStop(0,'#FFFFFF'); sheen.addColorStop(1,'#FFFBF6'); x.fillStyle=sheen; x.fillRect(M,M,W-2*M,H);
+  // 1. clean white page
+  x.fillStyle='#FFFFFF'; x.fillRect(0,0,W,H);
 
-  // 2. quiet decoration: dot matrices, web, faded pumpkin and bats (all very low contrast)
-  dots(896,58,6,6,24,'rgba(242,106,13,.55)',2.2); dots(60,1150,7,6,26,'rgba(242,106,13,.5)',2.2);
-  web(M,H-M,230,1,-1); softPumpkin(W-M-76,H-M-52,250,.09);
+  // 2. the brand: exact logo and wordmark
+  let y=44;
+  if(gd){ const w=520, h=w*gd.height/gd.width; x.drawImage(gd,CX-w/2,y,w,h); y+=h; }
+  y+=60; x.fillStyle='#5B6270'; x.font='400 27px Outfit, sans-serif'; ls('12px'); x.fillText("GOOGLE DEVELOPER'S DAY",CX+6,y); ls('0px');
+  y+=26; if(wm){ const w=780, h=w*wm.height/wm.width; x.drawImage(wm,CX-w/2,y,w,h); y+=h; }
+  y+=50; x.fillStyle=C.gray; x.font='300 22px Outfit, sans-serif'; ls('8px'); x.fillText('WHERE IDEAS GET A LITTLE SPOOKY.',CX+4,y); ls('0px');
 
-  // 3. the brand: exact logo and wordmark
-  if(gd){ const w=560, h=w*gd.height/gd.width; x.drawImage(gd,CX-w/2,66,w,h); }
-  x.fillStyle='#5B6270'; x.font='400 26px Outfit, sans-serif'; ls('11px'); x.fillText("GOOGLE DEVELOPER'S DAY",CX,204); ls('0px');
-  if(wm){ const w=800, h=w*wm.height/wm.width; x.drawImage(wm,CX-w/2,228,w,h); }
-  x.fillStyle=C.gray; x.font='300 22px Outfit, sans-serif'; ls('8px'); x.fillText('WHERE IDEAS GET A LITTLE SPOOKY.',CX,414); ls('0px');
+  // 3. the team: "TEAM OF N" between two orange dashes, the name (fits, wraps, never capped), a short orange rule
+  const size=(S.team&&S.team.size)||0, tY=y+86;
+  { const lab=size?`TEAM OF ${size}`:'TEAM'; x.font='500 30px Outfit, sans-serif'; ls('7px'); const lw=x.measureText(lab).width; x.fillStyle=C.gray; x.fillText(lab,CX+3.5,tY); ls('0px');
+    x.fillStyle=C.orange; x.fillRect(CX-lw/2-30-76,tY-12,76,3.5); x.fillRect(CX+lw/2+30,tY-12,76,3.5); }
+  const name=teamName()||'Team', fsMax=n>=4?108:124; let fs=fsMax, lines;
+  const tr=f=>ls(`-${(f*.024).toFixed(1)}px`);                              // tracking tightens with size, so small names never look cramped
+  for(;fs>=44;fs-=4){ x.font=`800 ${fs}px Outfit, sans-serif`; tr(fs); lines=wrapText(x,name,900); if(lines.length===1 || (lines.length===2 && fs<=Math.min(100,fsMax))) break; }
+  x.font=`800 ${fs}px Outfit, sans-serif`; tr(fs); lines=wrapText(x,name,900); if(lines.length>2) lines=[lines[0], ellip(lines.slice(1).join(' '),900)];
+  x.fillStyle=C.ink; const lh=fs*.98, b1=tY+46+fs*.74; lines.forEach((l,i)=>x.fillText(l,CX,b1+i*lh)); ls('0px');
+  const ulY=b1+(lines.length-1)*lh+46; x.fillStyle=C.orange; rr(CX-75,ulY,150,4,2); x.fill();
 
-  // 4. the team panel: "TEAM OF N", then the team name (fits, wraps, never capped)
-  const PYt=446, name=teamName()||'Team', size=(S.team&&S.team.size)||0;
-  let fs=118, lines; for(;fs>=44;fs-=4){ x.font=`800 ${fs}px Outfit, sans-serif`; lines=wrapText(x,name,600); if(lines.length<=2 && lines.length*fs*1.0<=(lines.length===1?124:132)) break; }
-  x.font=`800 ${fs}px Outfit, sans-serif`; lines=wrapText(x,name,600); if(lines.length>2) lines=[lines[0],(lines[1]+' '+lines.slice(2).join(' '))];
-  const PH = lines.length>1 ? 244 : 214;
-  x.save(); rr(PX,PYt,PW,PH,40); x.fillStyle='#FFFFFF'; x.shadowColor='rgba(242,106,13,.10)'; x.shadowBlur=24; x.shadowOffsetY=6; x.fill(); x.restore();
-  x.save(); rr(PX,PYt,PW,PH,40); x.clip(); softPumpkin(PX+PW-76,PYt+PH*.56,PH*.98,.11); bat(PX+120,PYt+100,50,false,'rgba(20,23,31,.1)'); bat(PX+70,PYt+PH-70,34,true,'rgba(20,23,31,.1)'); x.restore();
-  x.strokeStyle=C.orange; x.lineWidth=2; rr(PX,PYt,PW,PH,40); x.stroke();
-  { const lab=size?`TEAM OF ${size}`:'TEAM'; x.font='500 30px Outfit, sans-serif'; ls('6px'); const lw=x.measureText(lab).width; x.fillStyle='#4B5260'; x.fillText(lab,CX+3,PYt+56); ls('0px');
-    x.fillStyle=C.orange; x.fillRect(CX-lw/2-100,PYt+46,70,3); x.fillRect(CX+lw/2+30,PYt+46,70,3); }
-  { x.font=`800 ${fs}px Outfit, sans-serif`; x.fillStyle=C.ink; ls('-2px'); const lh=fs*1.0, top=PYt+66+fs*.82+(lines.length>1?16:0); lines.forEach((l,i)=>x.fillText(l,CX,top+i*lh)); ls('0px');
-    const by=top+(lines.length-1)*lh; const nameW2=Math.max(...lines.map(l=>x.measureText(l).width)); const sx=clamp(nameW2/2+54,290,410); x.strokeStyle=C.orange; x.lineWidth=3.5; x.lineCap='round';
-    [[-1],[1]].forEach(([d])=>{ x.beginPath(); x.moveTo(CX+d*sx,by-fs*.42); x.quadraticCurveTo(CX+d*(sx+8),by+22,CX+d*(sx-90),by+24); x.stroke(); spark(CX+d*(sx+6),by-fs*.52,15); }); }
-
-  // 5. one row per person: orange number badge, name, role pill, and a truthful status tile
-  const lead=(cardPeople().lead||'').trim(), mem=cardPeople().members.slice(0,3), people=[]; if(lead) people.push({n:lead,role:'Team Lead'}); mem.forEach(m=>people.push({n:m,role:'Member'}));
-  const n=Math.max(1,people.length), rowsTop=PYt+PH+30, rowsBottom=1150, gap=n>=4?14:n===3?20:28, hmax=n===2?196:170;
-  const h=Math.min(hmax,(rowsBottom-rowsTop-(n-1)*gap)/n), total=n*h+(n-1)*gap, k=h/hmax; let ry=rowsTop+Math.max(0,(rowsBottom-rowsTop-total)/2);
-  const nameW=330, wide = people.some(p=>{ x.font='800 34px Outfit, sans-serif'; return x.measureText(p.n).width>nameW*1.9; });       // very long names get the whole row
-  const wrapW = wide ? 640 : nameW;
-  const pillH=Math.max(32,46*k), kt=Math.max(k,.72);
-  const crown=(px,py,s)=>{ x.strokeStyle=C.ink; x.lineWidth=Math.max(2,2.4*k); x.lineJoin='round'; x.beginPath(); x.moveTo(px,py+s*.8); x.lineTo(px,py+s*.25); x.lineTo(px+s*.26,py+s*.52); x.lineTo(px+s*.5,py+s*.05); x.lineTo(px+s*.74,py+s*.52); x.lineTo(px+s,py+s*.25); x.lineTo(px+s,py+s*.8); x.closePath(); x.stroke(); x.beginPath(); x.moveTo(px,py+s*.97); x.lineTo(px+s,py+s*.97); x.stroke(); };
-  const group=(px,py,s)=>{ x.strokeStyle=C.ink; x.lineWidth=Math.max(2,2.4*k); x.beginPath(); x.arc(px+s*.32,py+s*.28,s*.2,0,6.2832); x.stroke(); x.beginPath(); x.arc(px+s*.74,py+s*.34,s*.15,0,6.2832); x.stroke(); x.beginPath(); x.arc(px+s*.32,py+s*1.02,s*.36,Math.PI*1.1,Math.PI*1.9); x.stroke(); x.beginPath(); x.arc(px+s*.76,py+s*.98,s*.26,Math.PI*1.1,Math.PI*1.8); x.stroke(); };
+  // 4. one soft row per person: orange number badge, name, role pill, then their part in the hackathon (icon, role, what they worked on)
+  const rowsTop=ulY+46, rowsBottom=1152;
+  const T = n<=2 ? {hmax:216,bs:100,nf:46,ph:40,tf:29,df:22,dl:29,ts:100,ml:3,gap:30}
+          : n===3 ? {hmax:168,bs:88,nf:42,ph:36,tf:27,df:21,dl:27,ts:84,ml:3,gap:22}
+          :         {hmax:124,bs:76,nf:36,ph:32,tf:25,df:20,dl:25,ts:70,ml:2,gap:16};
+  const h=Math.min(T.hmax,(rowsBottom-rowsTop-(n-1)*T.gap)/n); let ry=rowsTop+Math.max(0,(rowsBottom-rowsTop-(n*h+(n-1)*T.gap))/2);
+  const kindOf=r=>{ const t=r.toLowerCase();
+    if(/present|pitch|speak|demo|story|deck/.test(t)) return 'board';
+    if(/\b(ai|ml)\b|machine|data|model|intellig/.test(t)) return 'chip';
+    if(/design|\b(ui|ux)\b|figma|graphic|creative/.test(t)) return 'design';
+    if(/research|test|\bqa\b|quality|document|analy/.test(t)) return 'search';
+    if(/dev|engineer|stack|front|back|code|program|software|web|app|tech|system|cloud|api/.test(t)) return 'code';
+    return 'spark'; };
+  const icon=(kind,cx,cy,s)=>{ x.save(); x.strokeStyle=C.ink; x.lineWidth=Math.max(3.4,s*.055); x.lineCap='round'; x.lineJoin='round';
+    const L=(pts,close)=>{ x.beginPath(); pts.forEach(([u,v],i)=>{ i?x.lineTo(cx+u*s,cy+v*s):x.moveTo(cx+u*s,cy+v*s); }); if(close) x.closePath(); x.stroke(); };
+    if(kind==='code'){ L([[-.14,-.2],[-.33,0],[-.14,.2]]); L([[.14,-.2],[.33,0],[.14,.2]]); L([[.07,-.27],[-.07,.27]]); }
+    else if(kind==='board'){ rr(cx-.27*s,cy-.3*s,.54*s,.36*s,.04*s); x.stroke(); L([[0,.06],[0,.2]]); L([[0,.2],[-.14,.32]]); L([[0,.2],[.14,.32]]); }
+    else if(kind==='design'){ rr(cx-.28*s,cy-.28*s,.56*s,.56*s,.06*s); x.stroke(); L([[-.28,-.04],[.28,-.04]]); L([[-.04,-.04],[-.04,.28]]); }
+    else if(kind==='chip'){ rr(cx-.19*s,cy-.19*s,.38*s,.38*s,.05*s); x.stroke(); [-.08,.08].forEach(t=>{ L([[t,-.19],[t,-.3]]); L([[t,.19],[t,.3]]); L([[-.19,t],[-.3,t]]); L([[.19,t],[.3,t]]); }); }
+    else if(kind==='search'){ x.beginPath(); x.arc(cx-.06*s,cy-.06*s,.2*s,0,6.2832); x.stroke(); L([[.09,.09],[.3,.3]]); }
+    else { L([[0,-.3],[.07,-.07],[.3,0],[.07,.07],[0,.3],[-.07,.07],[-.3,0],[-.07,-.07]],true); }
+    x.restore(); };
+  const crown=(px,py,s)=>{ x.strokeStyle=C.ink; x.lineWidth=2.4; x.lineJoin='round'; x.beginPath(); x.moveTo(px,py+s*.8); x.lineTo(px,py+s*.25); x.lineTo(px+s*.26,py+s*.52); x.lineTo(px+s*.5,py+s*.05); x.lineTo(px+s*.74,py+s*.52); x.lineTo(px+s,py+s*.25); x.lineTo(px+s,py+s*.8); x.closePath(); x.stroke(); x.beginPath(); x.moveTo(px,py+s*.97); x.lineTo(px+s,py+s*.97); x.stroke(); };
+  const group=(px,py,s)=>{ x.strokeStyle=C.ink; x.lineWidth=2.4; x.beginPath(); x.arc(px+s*.32,py+s*.28,s*.2,0,6.2832); x.stroke(); x.beginPath(); x.arc(px+s*.74,py+s*.34,s*.15,0,6.2832); x.stroke(); x.beginPath(); x.arc(px+s*.32,py+s*1.02,s*.36,Math.PI*1.1,Math.PI*1.9); x.stroke(); x.beginPath(); x.arc(px+s*.76,py+s*.98,s*.26,Math.PI*1.1,Math.PI*1.8); x.stroke(); };
   people.forEach((p,i)=>{
-    x.save(); rr(PX,ry,PW,h,34*Math.max(.7,k)); x.fillStyle='#FFFFFF'; x.shadowColor='rgba(30,40,60,.10)'; x.shadowBlur=28; x.shadowOffsetY=8; x.fill(); x.restore(); x.strokeStyle=C.line; x.lineWidth=1.5; rr(PX,ry,PW,h,34*Math.max(.7,k)); x.stroke();
-    const bs=Math.min(104*k,h-28), bx=PX+24*Math.max(.8,k), by=ry+(h-bs)/2; const bg=x.createLinearGradient(bx,by,bx+bs,by+bs); bg.addColorStop(0,C.orangeHi); bg.addColorStop(1,C.orange);
-    x.save(); x.shadowColor='rgba(242,106,13,.35)'; x.shadowBlur=18; x.shadowOffsetY=8; x.fillStyle=bg; rr(bx,by,bs,bs,bs*.24); x.fill(); x.restore();
+    x.save(); rr(PX,ry,PW,h,30); x.fillStyle='#FFFFFF'; x.shadowColor='rgba(30,40,60,.10)'; x.shadowBlur=34; x.shadowOffsetY=10; x.fill(); x.restore(); x.strokeStyle='#EFF1F4'; x.lineWidth=1.4; rr(PX,ry,PW,h,30); x.stroke();
+    const bs=Math.min(T.bs,h-30), bx=PX+26, by=ry+(h-bs)/2, bg=x.createLinearGradient(bx,by,bx+bs,by+bs); bg.addColorStop(0,C.orangeHi); bg.addColorStop(1,C.orange);
+    x.save(); x.shadowColor='rgba(242,106,13,.32)'; x.shadowBlur=18; x.shadowOffsetY=8; x.fillStyle=bg; rr(bx,by,bs,bs,bs*.24); x.fill(); x.restore();
     x.fillStyle='#FFFFFF'; x.font=`800 ${Math.round(bs*.44)}px Outfit, sans-serif`; x.fillText(String(i+1).padStart(2,'0'),bx+bs/2,by+bs*.66);
-    const dx=bx+bs+26*Math.max(.8,k); x.fillStyle=C.line; x.fillRect(dx,ry+h*.22,2,h*.56);
-    const tx=dx+26*Math.max(.8,k); x.textAlign='left';
-    // name: shrinks first, then wraps to two lines, then ellipsis; the pill always fits below it
-    let nf=Math.round(52*Math.max(k,.7)), nl; for(;nf>=22;nf-=2){ x.font=`800 ${nf}px Outfit, sans-serif`; nl=wrapText(x,p.n,wrapW); if(nl.length<=2 && nl.length*nf*1.08+pillH+16*k <= h-24*k) break; }
-    x.font=`800 ${nf}px Outfit, sans-serif`; nl=wrapText(x,p.n,wrapW); if(nl.length>2) nl=[nl[0], (nl[1]+'…')]; nl=nl.slice(0,2);
-    const blockH=nl.length*nf*1.08+14*k+pillH, ny0=ry+(h-blockH)/2+nf*.86; x.fillStyle=C.ink; nl.forEach((l,j)=>x.fillText(l,tx,ny0+j*nf*1.08));
-    const py=ry+(h-blockH)/2+nl.length*nf*1.08+14*k, ps=pillH*.5, label=p.role; x.font=`500 ${Math.round(pillH*.52)}px Outfit, sans-serif`; const lw=x.measureText(label).width, pw=ps+lw+pillH*.9;
-    x.fillStyle=C.peach; rr(tx,py,pw,pillH,pillH/2); x.fill(); (i===0&&lead?crown:group)(tx+pillH*.3,py+pillH*.25,ps); x.fillStyle=C.ink; x.fillText(label,tx+pillH*.3+ps+pillH*.2,py+pillH*.67);
-    if(!wide){ const d2=PX+PW*.585; x.fillStyle=C.line; x.fillRect(d2,ry+h*.22,2,h*.56); const ts=Math.min(84*k,h-30), rx=d2+30*Math.max(.8,k), ty=ry+(h-ts)/2;
-      x.fillStyle=C.peach; rr(rx,ty,ts,ts,ts*.26); x.fill(); x.strokeStyle=C.orange; x.lineWidth=Math.max(3,5.5*k); x.lineCap='round'; x.lineJoin='round'; x.beginPath(); x.moveTo(rx+ts*.27,ty+ts*.53); x.lineTo(rx+ts*.44,ty+ts*.7); x.lineTo(rx+ts*.76,ty+ts*.32); x.stroke();
-      const ttx=rx+ts+22*Math.max(.8,k); x.fillStyle=C.ink; x.font=`700 ${Math.round(30*kt)}px Outfit, sans-serif`; x.fillText('Vault cracked',ttx,ry+h/2-2*kt); x.fillStyle=C.gray; x.font=`400 ${Math.round(24*kt)}px Outfit, sans-serif`; x.fillText('Challenge completed',ttx,ry+h/2+30*kt); }
-    x.textAlign='center'; ry+=h+gap;
+    const d1=bx+bs+24, d2=PX+PW*.53, tx=d1+26, nameW=d2-22-tx; x.fillStyle=C.line; x.fillRect(d1,ry+h*.2,2,h*.6); x.fillRect(d2,ry+h*.2,2,h*.6); x.textAlign='left';
+    // name: shrinks first, then wraps to two lines, then ellipsis; the role pill always fits below it
+    let nf=T.nf, nl; for(;nf>=20;nf-=2){ x.font=`800 ${nf}px Outfit, sans-serif`; nl=wrapText(x,p.n,nameW); if(nl.length<=2 && nl.length*nf*1.1+10+T.ph <= h-24) break; }
+    x.font=`800 ${nf}px Outfit, sans-serif`; nl=wrapText(x,p.n,nameW); if(nl.length>2) nl=[nl[0], ellip(nl.slice(1).join(' '),nameW)]; nl=nl.slice(0,2);
+    const nb=nl.length*nf*1.1+10+T.ph, n0=ry+(h-nb)/2; x.fillStyle=C.ink; nl.forEach((l,j)=>x.fillText(l,tx,n0+nf*.9+j*nf*1.1));
+    const py=n0+nl.length*nf*1.1+10, ps=T.ph*.5, label=p.isLead?'Team Lead':'Member'; x.font=`500 ${Math.round(T.ph*.56)}px Outfit, sans-serif`; const pw=T.ph*.3+ps+T.ph*.2+x.measureText(label).width+T.ph*.45;
+    x.fillStyle=C.peach; rr(tx,py,pw,T.ph,T.ph/2); x.fill(); (p.isLead?crown:group)(tx+T.ph*.3,py+T.ph*.25,ps); x.fillStyle=C.ink; x.fillText(label,tx+T.ph*.3+ps+T.ph*.2,py+T.ph*.68);
+    // their part in the hackathon: icon tile, role, what they worked on (older cards without a part keep a "Vault cracked" tile)
+    const ts=Math.min(T.ts,h-30), rx=d2+26, ty=ry+(h-ts)/2, ttx=rx+ts+20, tw=PX+PW-18-ttx; x.fillStyle=C.peach; rr(rx,ty,ts,ts,ts*.26); x.fill();
+    if(p.r){ icon(kindOf(p.r),rx+ts/2,ty+ts/2,ts);
+      let tf=T.tf, tl; for(;tf>=20;tf--){ x.font=`700 ${tf}px Outfit, sans-serif`; tl=wrapText(x,p.r,tw); if(tl.length===1) break; }
+      if(tl.length>1){ tf=22; x.font=`700 ${tf}px Outfit, sans-serif`; tl=wrapText(x,p.r,tw); if(tl.length>2) tl=[tl[0],ellip(tl.slice(1).join(' '),tw)]; tl=tl.slice(0,2); }
+      const room=Math.floor((h-20-tl.length*tf*1.18-6)/T.dl), dmax=Math.max(0,Math.min(T.ml,room)); x.font=`400 ${T.df}px Outfit, sans-serif`;
+      let dl=p.w?wrapText(x,p.w,tw):[]; if(dl.length>dmax){ dl=dl.slice(0,dmax); if(dmax>0) dl[dmax-1]=ellip(dl[dmax-1]+'…',tw); }
+      const tb=tl.length*tf*1.18+(dl.length?6+dl.length*T.dl:0); let ty0=ry+(h-tb)/2;
+      x.fillStyle=C.ink; x.font=`700 ${tf}px Outfit, sans-serif`; tl.forEach((l,j)=>x.fillText(l,ttx,ty0+tf*.92+j*tf*1.18));
+      x.fillStyle=C.gray; x.font=`400 ${T.df}px Outfit, sans-serif`; dl.forEach((l,j)=>x.fillText(l,ttx,ty0+tl.length*tf*1.18+6+T.dl*.78+j*T.dl)); }
+    else { x.strokeStyle=C.orange; x.lineWidth=Math.max(4,ts*.055); x.lineCap='round'; x.lineJoin='round'; x.beginPath(); x.moveTo(rx+ts*.27,ty+ts*.53); x.lineTo(rx+ts*.44,ty+ts*.7); x.lineTo(rx+ts*.76,ty+ts*.32); x.stroke();
+      x.fillStyle=C.ink; x.font=`700 ${T.tf}px Outfit, sans-serif`; x.fillText('Vault cracked',ttx,ry+h/2-2); x.fillStyle=C.gray; x.font=`400 ${T.df}px Outfit, sans-serif`; x.fillText('Challenge completed',ttx,ry+h/2+T.dl*.9); }
+    x.textAlign='center'; ry+=h+T.gap;
   });
 
-  // 6. footer: short orange rule, team code (orange value), handle
-  const fy=1186; x.fillStyle=C.orange; x.fillRect(CX-40,fy,80,4);
-  x.font='400 27px Outfit, sans-serif'; ls('7px'); const tl='TEAM CODE', code=S.team?fmtCode(S.team.code):''; const tw=x.measureText(tl+'   '+code).width; x.textAlign='left'; x.fillStyle=C.gray; x.fillText(tl,CX-tw/2,fy+56); const w1=x.measureText(tl+'   ').width; x.fillStyle=C.orange; x.font='700 27px Outfit, sans-serif'; x.fillText(code,CX-tw/2+w1,fy+56); x.textAlign='center'; ls('0px');
-  x.fillStyle=C.gray; x.font='400 27px Outfit, sans-serif'; ls('1px'); x.fillText(`${CONFIG.INSTAGRAM_HANDLE}   ·   #HACKOBER   #GDGoC`,CX,fy+106); ls('0px');
-  x.restore();
+  // 5. footer: short orange rule, team code (orange value), handle
+  const fy=1196; x.fillStyle=C.orange; rr(CX-40,fy,80,4,2); x.fill();
+  x.font='400 27px Outfit, sans-serif'; ls('7px'); const tl2='TEAM CODE', code=S.team?fmtCode(S.team.code):''; const tw2=x.measureText(tl2+'   '+code).width; x.textAlign='left'; x.fillStyle=C.gray; x.fillText(tl2,CX-tw2/2,fy+58); const w1=x.measureText(tl2+'   ').width; x.fillStyle=C.orange; x.font='700 27px Outfit, sans-serif'; x.fillText(code,CX-tw2/2+w1,fy+58); x.textAlign='center'; ls('0px');
+  x.fillStyle=C.gray; x.font='400 27px Outfit, sans-serif'; ls('1px'); x.fillText(`${CONFIG.INSTAGRAM_HANDLE}   |   #HACKOBER   #GDGoC`,CX,fy+108); ls('0px');
   c.toBlob(blob=>{
     if(!blob){ showWinners(false); return; }                       // card could not be made: never leave anyone without the message
     const url=URL.createObjectURL(blob), img=$('#cardImg'); img.src=url; img.style.display='block'; $('#cardHint').style.display='block';
@@ -2094,8 +2166,22 @@ async function makeCard(){
     btn.onclick=()=>{ const a=document.createElement('a'); a.href=url; a.download=fname; document.body.appendChild(a); a.click(); a.remove();
       sfx.found(); buzz([15,25,45]); toast('Card saved'); track('card_downloaded'); showWinners(); };
     const li=$('#liBtn'); li.style.display='inline-flex';
-    li.onclick=async()=>{ const text=linkedInCaption(); try{ await navigator.clipboard.writeText(text); toast('Caption copied. Attach your card and post.'); }catch(e){ toast('Open LinkedIn and attach your card'); }
-      track('linkedin_share'); setTimeout(()=>window.open('https://www.linkedin.com/feed/?shareActive=true&text='+encodeURIComponent(text),'_blank','noopener'),500); };
+    li.onclick=async()=>{
+      const text=linkedInCaption(), liUrl='https://www.linkedin.com/feed/?shareActive=true&text='+encodeURIComponent(text); track('linkedin_share');
+      /* phones: the share sheet carries the picture itself, so choosing LinkedIn opens its post box with the card already attached */
+      const phone=/Android|iPhone|iPad|iPod/i.test(navigator.userAgent) || (navigator.maxTouchPoints>1 && /Mac/.test(navigator.platform||''));      // desktop browsers have a share sheet too, but it rarely lists LinkedIn
+      if(phone && navigator.canShare && navigator.canShare({files:[file]})){
+        try{ navigator.clipboard.writeText(text).catch(()=>{}); }catch(e){}                      // the caption too, in case LinkedIn drops the text
+        try{ await navigator.share({files:[file],text,title:'HACKOBER'}); toast('Caption copied. Paste it into your post.'); showWinners(); return; }catch(e){ if(e&&e.name==='AbortError') return; }
+      }
+      /* computers: the card goes on the clipboard, then LinkedIn's post box opens with the caption already typed. Ctrl+V attaches the card. */
+      let copied=false; try{ await navigator.clipboard.write([new ClipboardItem({'image/png':blob})]); copied=true; }catch(e){}
+      if(!copied){ const a=document.createElement('a'); a.href=url; a.download=fname; document.body.appendChild(a); a.click(); a.remove(); }
+      const mac=/Mac|iPhone|iPad/i.test(navigator.platform||navigator.userAgent||'');
+      askSheet({ title:copied?'Card copied':'Card saved',
+        body:copied?`In the LinkedIn post box, press ${mac?'Cmd':'Ctrl'}+V to attach your card. Your caption is already typed.`:'In the LinkedIn post box, click the image icon and pick the card you just saved. Your caption is already typed.',
+        yes:'Open LinkedIn', no:'Not now', onYes:()=>{ window.open(liUrl,'_blank','noopener'); showWinners(); } });
+    };
     const file=new File([blob],fname,{type:'image/png'});
     if(navigator.canShare && navigator.canShare({files:[file]})){ const sb=$('#shareBtn'); sb.style.display='inline-flex'; sb.onclick=async()=>{ try{ await navigator.share({files:[file],title:'HACKOBER'}); }catch(e){} }; }
   },'image/png');
@@ -2174,10 +2260,10 @@ async function makeCard(){
     on('#dvLock', ()=>{ setUnlocked(false); render(); });
     on('#dvReset', ()=>{ try{ localStorage.removeItem(KEY); localStorage.removeItem(DEVSTORE); }catch(e){} location.replace(location.pathname); });
     const needOpen = () => { if(isOpen()) return false; $('#dvActMsg').textContent='The vault is still locked. Tap "Open vault now" first.'; $('#dvActMsg').style.color='#fbbc04'; return true; };
-    on('#dvPresetGo', ()=>{ const p=$('#dvPreset').value; if(!p||needOpen()) return; const code=makeCode(), team={code,name:'DEV TEAM',size:4,lead:'Dev Lead',roster:['Asha','Ravi','Meera']}, plan=planFor(code,Object.keys(GAMES));
-      const P={ fresh:()=>FRESH(), leadTeam:()=>({...FRESH(),role:'lead',myName:'Dev Lead',team,plan}), leadVault:()=>({...FRESH(),role:'lead',myName:'Dev Lead',team,plan,started:true,locks:[true,false,false,false,false]}),
-        leadDone:()=>({...FRESH(),role:'lead',myName:'Dev Lead',team,plan,started:true,locks:[true,true,true,true,false]}), memWait:()=>({...FRESH(),role:'member',myName:'Asha',team,plan}),
-        memOpen:()=>({...FRESH(),role:'member',myName:'Asha',team,plan,teamDone:true,locks:[true,true,true,true,false]}), finished:()=>({...FRESH(),role:'lead',myName:'Dev Lead',team,plan,started:true,locks:[true,true,true,true,true],done:true}) };
+    on('#dvPresetGo', ()=>{ const p=$('#dvPreset').value; if(!p||needOpen()) return; const code=makeCode(), team={code,name:'DEV TEAM',size:4,lead:'Dev Lead',roster:['Asha','Ravi','Meera'],parts:{'dev lead':{r:'Full-Stack Developer',w:'Frontend, Backend, System Design'},'asha':{r:'UI/UX Designer',w:'UI/UX Design, Prototyping'},'ravi':{r:'Backend Developer',w:'APIs, Databases, Server Logic'},'meera':{r:'Presenter',w:'Pitch Deck, Demo, Documentation'}}}, plan=planFor(code,Object.keys(GAMES));
+      const P={ fresh:()=>FRESH(), leadTeam:()=>({...FRESH(),role:'lead',myName:'Dev Lead',myRole:'Full-Stack Developer',myWork:'Frontend, Backend, System Design',team,plan}), leadVault:()=>({...FRESH(),role:'lead',myName:'Dev Lead',myRole:'Full-Stack Developer',myWork:'Frontend, Backend, System Design',team,plan,started:true,locks:[true,false,false,false,false]}),
+        leadDone:()=>({...FRESH(),role:'lead',myName:'Dev Lead',myRole:'Full-Stack Developer',myWork:'Frontend, Backend, System Design',team,plan,started:true,locks:[true,true,true,true,false]}), memWait:()=>({...FRESH(),role:'member',myName:'Asha',myRole:'UI/UX Designer',myWork:'UI/UX Design, Prototyping',team,plan}),
+        memOpen:()=>({...FRESH(),role:'member',myName:'Asha',myRole:'UI/UX Designer',myWork:'UI/UX Design, Prototyping',team,plan,teamDone:true,locks:[true,true,true,true,false]}), finished:()=>({...FRESH(),role:'lead',myName:'Dev Lead',myRole:'Full-Stack Developer',myWork:'Frontend, Backend, System Design',team,plan,started:true,locks:[true,true,true,true,true],done:true}) };
       S=P[p](); save(); close(); go({fresh:'gate',leadTeam:'teamcode',leadVault:'vault',leadDone:'teamdone',memWait:'wait',memOpen:'vault',finished:'finale'}[p]); });
     on('#dvGameGo', ()=>{ const g=$('#dvGame').value; if(!g||needOpen()) return; if(!S.team){ const code=makeCode(); S={...FRESH(),role:'member',myName:'Dev',team:{code,name:'DEV TEAM',size:4,lead:'Dev Lead',roster:[]},plan:planFor(code,Object.keys(GAMES))}; save(); } close(); startGame(null,g); });
   }
