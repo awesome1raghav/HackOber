@@ -34,7 +34,9 @@ The QR shown on the last lock is `assets/feedback-qr.png` (your image, unchanged
 * 15 games are built in; each team's lead gets 3 of them, picked from the team code so it is random per team but repeatable. A sample of 45,500 teams showed an even spread across all 15 games and all 455 possible trios.
 
 ## 6. Countdown gate
-* The site shows only a countdown until **`CONFIG.OPENS_AT`** (currently `2026-10-01T14:30:00+05:30`, i.e. 1 Oct 2026, 2:30 pm India time). Every other screen, deep link and invite link is unreachable until then.
+* The site shows only the **HACKOBER wordmark and the timers** until **`CONFIG.OPENS_AT`** (currently `2026-10-01T13:30:00+05:30`, i.e. 1 Oct 2026, **1:30 pm** India time). Every other screen, deep link and invite link is unreachable until then.
+* "The event is over. Almost." appears only in the **last 10 minutes** of the main countdown.
+* Once the countdown reaches zero, the gate returns to its full look (logo, tagline) with the "Open the vault" button.
 * When the countdown hits zero on a phone that is already open, the "Open the vault" button appears by itself.
 * The countdown uses the **website's own clock** (read from the server's `Date` header), not the phone's, so a wrong or changed phone clock can't skip it. If a phone is offline it falls back to its own clock.
 * To change the time, edit `OPENS_AT` in `index.html`, then run `python tools/make_deploy.py` and re-upload.
@@ -58,3 +60,14 @@ The QR shown on the last lock is `assets/feedback-qr.png` (your image, unchanged
 * Because there is no server, names travel by QR: a teammate's **name pass** (shown in their waiting room) is scanned by the lead, and the lead's **finish code** then carries the lead's name and every teammate's name to all phones. Every card shows **Team lead + Members**.
 * A teammate's own name is always on their own card, even if the lead never scanned their pass.
 * Names are shown in full on the phone that typed them. Inside a QR, each name is limited to about 36 characters (longer ones get a "..."), which keeps the codes easy to scan. All of this was checked with OpenCV and jsQR, including worst-case very long names.
+
+## 10. Round 1 timer
+* Under the main countdown there is a second, smaller timer, **"Round 1 ends in"**, counting down to **`CONFIG.ROUND1_ENDS_AT`** (currently `2026-10-01T13:00:00+05:30`, 1:00 pm India time).
+* When it reaches zero it changes to **"Round 1 has ended"** and stays that way until the vault opens. If its time is not before the main countdown's time, the timer hides itself.
+* It uses the same server-corrected clock as the main countdown. To change either time, edit `ROUND1_ENDS_AT` or `OPENS_AT` in `index.html`, run `python tools/make_deploy.py` and re-upload.
+
+## 11. The team card (made to be posted on LinkedIn)
+* "Ivory & Ember" design, matching the poster: warm ivory paper with a faint blueprint grid, a chamfered brand frame holding the exact logo and wordmark, a 3D `#`, `@` and cube, dotted matrices, and an ember arc in the corner. Below it a certificate-style panel opens around a pumpkin seal and shows "Vault cracked · Team of N", the team name in an ember gradient, **Team lead** and **Members**, then the team code, the month and `#HACKOBER #GDGoC`.
+* Colour reasoning: ivory (~60%) gives warmth and clarity; brand orange with its burnt-brown depth (~30%) carries energy and courage; navy ink (~10%) sits opposite orange on the wheel, so names stay sharp and feel trustworthy.
+* The names block is measured first and scaled down only as much as needed, so very long names never collide with the footer; small teams are centred in the panel.
+* Next to "Download card" there is **Share on LinkedIn**: it copies a ready-to-post caption (team name, everyone's names, hashtags) and opens LinkedIn's composer. LinkedIn does not allow attaching an image by link, so people attach the downloaded card themselves.

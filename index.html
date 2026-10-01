@@ -127,7 +127,13 @@
   #gateLocked{display:none;width:100%;max-width:420px;margin-top:1.8rem}
   #s-gate.locked #gateLocked{display:block}
   #s-gate.locked #gateHook,#s-gate.locked #gateBtn,#s-gate.locked .fine,#s-gate.locked #startOver{display:none!important}
-  .lockedLine{margin:0;font-size:.95rem;font-weight:600;letter-spacing:.34em;text-transform:uppercase;line-height:2;padding-left:.34em}
+  /* while the timers run, the gate shows ONLY the HACKOBER wordmark and the timers */
+  #s-gate.locked .logoG,#s-gate.locked .gDay,#s-gate.locked .gTag,#s-gate.locked .gbar{display:none!important}
+  #s-gate.locked .stack{margin-top:0}                         /* the wordmark leads the screen now, so it needs no gap above it */
+  /* "The event is over. Almost." appears only in the last 10 minutes */
+  .lockedLine{display:none;margin:0;font-size:.95rem;font-weight:600;letter-spacing:.34em;text-transform:uppercase;line-height:2;padding-left:.34em}
+  #s-gate.near .lockedLine{display:block;animation:lockedIn 1.1s var(--ease) backwards}
+  @keyframes lockedIn{from{opacity:0;transform:translateY(14px) scale(.97);filter:blur(8px)}to{opacity:1;transform:none;filter:blur(0)}}
   .lockedLine span{color:var(--orange)}
   #cd{position:relative;margin-top:2rem;padding:26px 8px 22px;background:rgba(251,250,247,.72);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px)}
   .cdc{position:absolute;width:20px;height:20px;border:1.5px solid rgba(17,17,18,.4)}
@@ -143,6 +149,17 @@
   .cdU b.tick{animation:cdTick .5s var(--ease)}
   @keyframes cdTick{from{opacity:.25;transform:translateY(-5px)}to{opacity:1;transform:none}}
   .cdU small{margin-top:.75rem;font-size:.52rem;font-weight:500;letter-spacing:.26em;text-transform:uppercase;color:var(--dim);padding-left:.26em}
+  /* round 1 timer: a second, lighter countdown under the main one */
+  #round1{margin:1.4rem auto 0;padding:16px 18px 14px;max-width:340px;border:1px solid var(--line);border-radius:20px;background:rgba(255,255,255,.62);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);box-shadow:0 20px 40px -28px rgba(17,17,18,.35)}
+  #roundLabel{margin:0;font-size:.66rem;font-weight:600;letter-spacing:.34em;text-transform:uppercase;color:var(--orange);padding-left:.34em}
+  .roundRow{display:flex;align-items:flex-start;justify-content:center;gap:clamp(4px,2vw,12px);margin-top:.7rem}
+  .lcU{display:flex;flex-direction:column;align-items:center;min-width:3.2rem}
+  .lcU b{font-family:'Cormorant Garamond','Times New Roman',serif;font-weight:600;font-size:clamp(1.9rem,8vw,2.5rem);line-height:1;font-variant-numeric:lining-nums tabular-nums}
+  .lcU b.tick{animation:cdTick .5s var(--ease)}
+  .lcU small{margin-top:.5rem;font-size:.5rem;font-weight:500;letter-spacing:.24em;text-transform:uppercase;color:var(--dim);padding-left:.24em;white-space:nowrap}
+  .roundRow s{font-family:'Cormorant Garamond',serif;font-size:clamp(1.4rem,6vw,2rem);text-decoration:none;color:rgba(17,17,18,.5);line-height:1.1}
+  #round1.now .roundRow{display:none}
+  #round1.now #roundLabel{font-size:.9rem;letter-spacing:.3em;padding:.5rem 0 .3rem .3em}
   .cdU small{white-space:nowrap}
   @media (max-width:380px){.cdU small{font-size:.46rem;letter-spacing:.14em;padding-left:.14em}#cd{padding-left:2px;padding-right:2px}}
   #cd s{font-family:'Cormorant Garamond',serif;font-size:clamp(1.6rem,7vw,2.6rem);text-decoration:none;line-height:1.15;color:rgba(17,17,18,.55);flex:none}
@@ -472,7 +489,7 @@
   #finaleRest{display:none;flex-direction:column;align-items:center;width:100%;max-width:380px;margin-top:2rem;opacity:0;transition:opacity 1s}
   #finaleRest.in{opacity:1}
   #finaleRest.in>*{animation:up 1s var(--ease) backwards;animation-delay:calc(var(--i,0)*120ms)}
-  #cardImg{width:min(230px,58vw);border-radius:14px;box-shadow:0 30px 60px -24px rgba(17,17,18,.45);display:none;margin-top:1.4rem}
+  #cardImg{width:min(280px,70vw);border-radius:14px;box-shadow:0 30px 60px -24px rgba(17,17,18,.45);display:none;margin-top:1.4rem}
   #winners{margin-top:1.8rem;padding:26px 22px 24px;width:100%;text-align:center;border-color:rgba(242,106,13,.35);box-shadow:0 30px 60px -30px rgba(242,106,13,.45)}
   #winners .eyebrow{color:var(--orange);font-weight:600;margin-top:.9rem}
   #winners h3{margin:.5rem 0 0;font-size:1.6rem;font-weight:600;letter-spacing:-.03em;line-height:1.15}
@@ -543,9 +560,9 @@
   <!-- GATE -->
   <section class="scene" id="s-gate">
     <img class="logoG" id="imgGdg" alt="Google Developer Groups on Campus" />
-    <p class="eyebrow" style="margin-top:1.6rem">Google <b>Developer's</b> <span class="o">Day</span></p>
+    <p class="eyebrow gDay" style="margin-top:1.6rem">Google <b>Developer's</b> <span class="o">Day</span></p>
     <div class="stack"><div class="pulse"></div><img id="imgWord" alt="HACKOBER" /><div class="shine"></div></div>
-    <p class="eyebrow">Where ideas get a little <span class="o"><b>spooky.</b></span></p>
+    <p class="eyebrow gTag">Where ideas get a little <span class="o"><b>spooky.</b></span></p>
     <div class="gbar"><i></i><i></i><i></i><i></i></div>
     <div id="gateLocked">
       <p class="lockedLine">The event is over.<br><span>Almost.</span></p>
@@ -557,6 +574,14 @@
           <div class="cdU"><b id="cdH">00</b><small>Hours</small></div><s>:</s>
           <div class="cdU"><b id="cdMi">00</b><small>Minutes</small></div><s>:</s>
           <div class="cdU"><b id="cdS">00</b><small>Seconds</small></div>
+        </div>
+      </div>
+      <div id="round1" role="timer" aria-label="Round 1 countdown">
+        <p id="roundLabel">Round 1 ends in</p>
+        <div class="roundRow" id="roundRow">
+          <div class="lcU"><b id="lcH">00</b><small>Hours</small></div><s>:</s>
+          <div class="lcU"><b id="lcM">00</b><small>Minutes</small></div><s>:</s>
+          <div class="lcU"><b id="lcS">00</b><small>Seconds</small></div>
         </div>
       </div>
     </div>
@@ -716,6 +741,7 @@
       <p class="lead" id="cardHint" style="display:none;font-size:.9rem;margin-top:1.1rem">Save it to your phone, then hang tight for the winners.</p>
       <button class="btn" id="cardBtn" style="display:none;margin-top:1rem"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v11M7 11l5 5 5-5M5 20h14"/></svg> Download card</button>
       <button class="btn ghost sm" id="shareBtn" style="display:none">Share instead</button>
+      <button class="btn ghost sm" id="liBtn" style="display:none"><svg viewBox="0 0 24 24" fill="currentColor" style="width:15px;height:15px"><path d="M4.98 3.5a2.5 2.5 0 11-.02 5 2.5 2.5 0 01.02-5zM3 9.75h4V21H3V9.75zm6.5 0h3.83v1.54h.06c.53-.95 1.84-1.95 3.78-1.95 4.04 0 4.78 2.55 4.78 5.87V21h-4v-5.1c0-1.22-.02-2.78-1.74-2.78-1.74 0-2 1.33-2 2.7V21h-4V9.75z"/></svg> Share on LinkedIn</button>
       <div class="card" id="winners" style="display:none"><span class="wdots"><i></i><i></i><i></i></span><p class="eyebrow">Hold tight</p><h3>Winners will be announced shortly.</h3><p>Stay close and keep an eye out. Thanks for playing, it wouldn't have been the same without you.</p></div>
       <div class="card" id="next">
         <p class="eyebrow">What's next</p>
@@ -785,7 +811,8 @@ const _ce = console.error; console.error = function(...a){ try{ devlog('console'
 
 const CONFIG = {
   VERSION: "4.4",
-  OPENS_AT: "2026-10-01T14:30:00+05:30",               // when the vault opens (India time). Until then the site shows only the countdown.
+  OPENS_AT: "2026-10-01T13:30:00+05:30",               // when the vault opens (India time): 1 Oct 2026, 1:30 pm. Until then the site shows only the wordmark and the timers.
+  ROUND1_ENDS_AT: "2026-10-01T13:00:00+05:30",         // round 1 ends (India time): the second timer counts down to it, then says "Round 1 has ended".
   DEV_PIN_HASH: "0360d53e0ef2df7e56f62fceacf612e77c28e2b1591c9079983a7c51803dc6ea",   // SHA-256 of the developer PIN. Change with: python tools/set_dev_pin.py <new pin>
   FEEDBACK_URL: "https://docs.google.com/forms/d/e/1FAIpQLScpWqPewlSOqR0T_p-LnD046bnjk6fbUK3YZq-bxf8XdrzSvg/viewform",   // read from your QR image
   SITE_URL: "",                                         // optional: the public URL of this page (used inside team QR codes). Empty = the page's own address.
@@ -1141,13 +1168,28 @@ function renderCountdown(){
   const ids=['#cdMo','#cdD','#cdH','#cdMi','#cdS'], p=cdParts(targetMs()).map(n=>String(n).padStart(2,'0'));
   ids.forEach((id,i)=>{ const el=$(id); if(el.textContent!==p[i]){ el.textContent=p[i]; el.classList.remove('tick'); el.offsetWidth; el.classList.add('tick'); } });
 }
+/* round 1 timer: counts down to CONFIG.ROUND1_ENDS_AT, then says "Round 1 has ended" */
+const round1Ms = () => Date.parse(CONFIG.ROUND1_ENDS_AT);
+function renderRound1(){
+  const box=$('#round1'), left=round1Ms()-nowMs();
+  if(isNaN(round1Ms()) || round1Ms()>=targetMs()){ box.style.display='none'; return; }         // nothing to show if round 1 doesn't end before the reveal
+  box.style.display='';
+  if(left<=0){ box.classList.add('now'); $('#roundLabel').textContent='Round 1 has ended'; return; }
+  box.classList.remove('now'); $('#roundLabel').textContent='Round 1 ends in';
+  const s=Math.floor(left/1000), p=[Math.floor(s/3600), Math.floor(s%3600/60), s%60].map(n=>String(n).padStart(2,'0'));
+  [['#lcH',p[0]],['#lcM',p[1]],['#lcS',p[2]]].forEach(([id,v])=>{ const el=$(id); if(el.textContent!==v){ el.textContent=v; el.classList.remove('tick'); el.offsetWidth; el.classList.add('tick'); } });
+}
 enter.gate = async () => {
   const gate = $('#s-gate');
   if(!isOpen()){                                              // locked: only the countdown is visible, nothing else exists yet
     gate.classList.add('locked');
-    while(!isOpen()){ renderCountdown(); await sleep(targetMs()-nowMs()<3000 ? 100 : 250); }
-    gate.classList.remove('locked');                          // the moment it reaches zero, the button and hooks appear
-  } else gate.classList.remove('locked');
+    while(!isOpen()){
+      renderCountdown(); renderRound1();
+      gate.classList.toggle('near', targetMs()-nowMs() <= 10*60*1000);      // "The event is over. Almost." only in the last 10 minutes
+      await sleep(targetMs()-nowMs()<3000 ? 100 : 250);
+    }
+    gate.classList.remove('locked','near');                   // the moment it reaches zero, the button and hooks appear
+  } else gate.classList.remove('locked','near');
   const resumed = !!S.role;
   $('#gateBtnTxt').textContent = resumed ? 'Continue' : 'Open the vault';
   const so = $('#startOver'); so.style.display = resumed ? 'inline-block' : 'none';
@@ -1899,7 +1941,7 @@ function surge({small, big, ms=2600}){
 }
 enter.finale = async () => {
   const fin = $('#fin'), rest = $('#finaleRest'), flash = $('#flash'), done = S.done, M = CONFIG.MESSAGE;
-  fin.innerHTML=''; rest.classList.remove('in'); rest.style.display='none'; $('#cardImg').style.display='none'; $('#cardBtn').style.display='none'; $('#shareBtn').style.display='none'; $('#cardHint').style.display='none'; $('#unlockAgain').style.display='none';
+  fin.innerHTML=''; rest.classList.remove('in'); rest.style.display='none'; $('#cardImg').style.display='none'; $('#cardBtn').style.display='none'; $('#shareBtn').style.display='none'; $('#liBtn').style.display='none'; $('#cardHint').style.display='none'; $('#unlockAgain').style.display='none';
   $('#winners').style.display='none'; $('#winners').classList.remove('show');
   const lines = [`${M[0]} ${M[1]}`, M[2], M[3], done ? [...M[4]].map((ch,k)=>`<span class="lt" style="--k:${k}">${ch}</span>`).join('') : '<span class="sk"></span>'];
   for(let i=0;i<lines.length;i++){
@@ -1940,36 +1982,99 @@ function wrapText(x, text, maxW){
   words.forEach(w=>{ const t = cur?cur+' '+w:w; if(x.measureText(t).width<=maxW) cur=t; else { if(cur) lines.push(cur); cur = push(w); } });
   if(cur) lines.push(cur); return lines;
 }
+/* a ready-to-post LinkedIn caption (copied to the clipboard by the "Share on LinkedIn" button) */
+function linkedInCaption(){
+  const { lead, members } = cardPeople(), t = S.team || {}, who = [lead, ...members].filter(Boolean);
+  const list = who.length>1 ? who.slice(0,-1).join(', ')+' and '+who[who.length-1] : (who[0]||'');
+  return `Our team ${t.name||''} just cracked the vault at HACKOBER, Google Developer's Day by GDG on Campus GRIET.\n\n${list?`The team: ${list}.\n\n`:''}Where ideas get a little spooky.\n\n#HACKOBER #GDGoC #GoogleDevelopersDay #GoogleDeveloperGroups`;
+}
 async function makeCard(){
   try{ await document.fonts.load('700 80px Outfit'); await document.fonts.load('300 30px Outfit'); }catch(e){}
   const [wm, gd] = await Promise.all([loadImg(A.wordmark), loadImg(A.gdg)]);
+  /* ---- "Ivory & Ember" LinkedIn card: the poster's own world, framed like a certificate -------------------
+     Colour theory: a warm ivory ground (~60%) with the brand ember orange and its analogous burnt-brown depth (~30%),
+     plus deep navy-ink type (~10%) that sits opposite the orange on the wheel, so names stay razor sharp.
+     Psychology: orange = energy, courage, enthusiasm; ivory = warmth, clarity, premium paper;
+     navy ink = trust and authority; the ember-brown gradient on the team name reads as achievement and craft. */
   const W=1080, H=1350, c=document.createElement('canvas'); c.width=W; c.height=H; const x=c.getContext('2d'), ls=v=>{ if('letterSpacing' in x) x.letterSpacing=v; };
-  x.fillStyle='#fbfaf7'; x.fillRect(0,0,W,H);
-  const g1=x.createRadialGradient(W,0,0,W,0,700); g1.addColorStop(0,'rgba(242,106,13,.14)'); g1.addColorStop(1,'rgba(242,106,13,0)'); x.fillStyle=g1; x.fillRect(0,0,W,H);
-  const g2=x.createRadialGradient(0,H,0,0,H,700); g2.addColorStop(0,'rgba(242,106,13,.12)'); g2.addColorStop(1,'rgba(242,106,13,0)'); x.fillStyle=g2; x.fillRect(0,0,W,H);
-  x.fillStyle='rgba(17,17,18,.28)'; for(let i=0;i<10;i++) for(let j=0;j<10;j++){ x.fillRect(W-260+i*22,50+j*22,3,3); x.fillRect(50+i*22,H-270+j*22,3,3); }
+  const C={ cream:'#F8F4EC', cream2:'#F3E9D8', orange:'#F26A0D', orangeHi:'#FF9A3D', cube:'#EA592A', ember:'#B8420B', brown:'#8A2A04', ink:'#1C2534', grey:'#8A8F9C' };
+  const maxW=820, PX=60, PW=960, PY=612, PH=682, CX=W/2;                         // lower panel: x, width, top, height; shared centre
+  const rr=(px,py,w,h,r)=>{ x.beginPath(); x.moveTo(px+r,py); x.arcTo(px+w,py,px+w,py+h,r); x.arcTo(px+w,py+h,px,py+h,r); x.arcTo(px,py+h,px,py,r); x.arcTo(px,py,px+w,py,r); x.closePath(); };
+  const cham=(px,py,w,h,k)=>{ x.beginPath(); x.moveTo(px+k,py); x.lineTo(px+w-k,py); x.lineTo(px+w,py+k); x.lineTo(px+w,py+h-k); x.lineTo(px+w-k,py+h); x.lineTo(px+k,py+h); x.lineTo(px,py+h-k); x.lineTo(px,py+k); x.closePath(); };
+  const dots=(x0,y0,cols,rows,gap,col,r=2.2)=>{ x.fillStyle=col; for(let i=0;i<cols;i++) for(let j=0;j<rows;j++){ x.beginPath(); x.arc(x0+i*gap,y0+j*gap,r,0,6.2832); x.fill(); } };
+  const trace=(pts,node)=>{ x.strokeStyle='rgba(242,106,13,.7)'; x.lineWidth=2; x.beginPath(); pts.forEach(([a,b],i)=>i?x.lineTo(a,b):x.moveTo(a,b)); x.stroke(); const [a,b]=pts[pts.length-1]; x.fillStyle=C.orange; x.beginPath(); x.arc(a,b,node||4.5,0,6.2832); x.fill(); };
   x.textAlign='center'; x.textBaseline='alphabetic';
-  if(gd){ const w=640, h=w*gd.height/gd.width; x.drawImage(gd,(W-w)/2,110,w,h); }
-  x.fillStyle='rgba(17,17,18,.6)'; x.font='300 30px Outfit, sans-serif'; ls('10px'); x.fillText("GOOGLE DEVELOPER'S DAY",W/2,290);
-  if(wm){ const w=900, h=w*wm.height/wm.width; x.drawImage(wm,(W-w)/2,340,w,h); }
-  ls('7px'); x.fillStyle='rgba(17,17,18,.6)'; x.font='300 26px Outfit, sans-serif'; x.fillText('WHERE IDEAS GET A LITTLE SPOOKY.',W/2,560); ls('0px');
-  x.fillStyle='rgba(17,17,18,.5)'; x.font='500 26px Outfit, sans-serif'; ls('8px'); x.fillText(S.team && S.team.size ? `TEAM OF ${S.team.size}` : 'TEAM',W/2,636); ls('0px');
-  // team name: shrinks to fit, wraps, no cap on length
-  const name = teamName() || 'Team', maxW = 860, boxH = 150; let fs = 104, lines;
-  for(;fs>=36;fs-=4){ x.font=`700 ${fs}px Outfit, sans-serif`; lines = wrapText(x,name,maxW); if(lines.length*fs*1.05<=boxH) break; }
-  x.font=`700 ${fs}px Outfit, sans-serif`; lines = wrapText(x,name,maxW);
-  x.fillStyle='#111112'; const lh=fs*1.05, top=650+fs*.92; lines.forEach((l,i)=>x.fillText(l,W/2,top+i*lh));
-  // the people: team lead first, then every teammate, one line each (a line shrinks to fit, never cut short unless absurdly long)
+
+  // 1. warm paper ground, a faint blueprint grid, and two soft ember glows
+  const bg=x.createLinearGradient(0,0,W,H); bg.addColorStop(0,'#FFFBF4'); bg.addColorStop(1,C.cream); x.fillStyle=bg; x.fillRect(0,0,W,H);
+  [[W,0],[0,H]].forEach(([gx,gy])=>{ const g=x.createRadialGradient(gx,gy,0,gx,gy,720); g.addColorStop(0,'rgba(242,106,13,.14)'); g.addColorStop(1,'rgba(242,106,13,0)'); x.fillStyle=g; x.fillRect(0,0,W,H); });
+  x.strokeStyle='rgba(28,37,52,.04)'; x.lineWidth=1; for(let gx=0;gx<=W;gx+=54){ x.beginPath(); x.moveTo(gx,0); x.lineTo(gx,H); x.stroke(); } for(let gy=0;gy<=H;gy+=54){ x.beginPath(); x.moveTo(0,gy); x.lineTo(W,gy); x.stroke(); }
+
+  // 2. poster ornaments: bottom-left ember ring, wedges, the 3D # and @, the cube, dotted matrices
+  { x.save(); const ag=x.createLinearGradient(0,H-220,230,H); ag.addColorStop(0,C.orangeHi); ag.addColorStop(1,C.cube); x.strokeStyle=ag; x.lineWidth=58; x.lineCap='butt'; x.beginPath(); x.arc(-6,H+6,168,-Math.PI/2,0); x.stroke(); x.restore(); }
+  { const tg=x.createLinearGradient(W-170,H-110,W,H); tg.addColorStop(0,C.orangeHi); tg.addColorStop(1,C.cube); x.fillStyle=tg; x.beginPath(); x.moveTo(W,H-120); x.lineTo(W,H); x.lineTo(W-190,H); x.closePath(); x.fill();
+    x.fillStyle=C.orange; x.globalAlpha=.9; x.fillRect(230,H-34,86,34); x.globalAlpha=.55; x.fillRect(560,H-22,40,22); x.globalAlpha=1;
+    const tg2=x.createLinearGradient(W-90,690,W,790); tg2.addColorStop(0,C.orangeHi); tg2.addColorStop(1,C.cube); x.fillStyle=tg2; x.beginPath(); x.moveTo(W,690); x.lineTo(W,800); x.lineTo(W-90,800); x.closePath(); x.fill(); }
+  { x.save(); x.translate(86,222); x.rotate(-.13); x.font='800 200px Outfit, sans-serif'; x.fillStyle=C.brown; x.fillText('#',9,9); x.fillStyle=C.ember; x.fillText('#',5,5); const hg=x.createLinearGradient(0,-160,0,40); hg.addColorStop(0,C.orangeHi); hg.addColorStop(1,C.cube); x.fillStyle=hg; x.fillText('#',0,0); x.restore(); }
+  { x.save(); x.font='800 130px Outfit, sans-serif'; x.fillStyle='rgba(138,143,156,.5)'; x.fillText('@',706,72); x.restore(); }
+  { const cx=1034, cy=124, s=236; const P=(a,b)=>[cx+a*s,cy+b*s];
+    const face=(pts,g0,g1)=>{ const gr=x.createLinearGradient(...P(pts[0][0],pts[0][1]),...P(pts[2][0],pts[2][1])); gr.addColorStop(0,g0); gr.addColorStop(1,g1); x.fillStyle=gr; x.beginPath(); pts.forEach(([a,b],i)=>{ const [px,py]=P(a,b); i?x.lineTo(px,py):x.moveTo(px,py); }); x.closePath(); x.fill(); };
+    x.save(); x.shadowColor='rgba(138,42,4,.35)'; x.shadowBlur=40; x.shadowOffsetY=18;
+    face([[-.5,-.29],[0,-.58],[.5,-.29],[0,0]],'#FFB066','#F26A0D'); face([[-.5,-.29],[0,0],[0,.58],[-.5,.29]],'#E2540F','#B8420B'); face([[.5,-.29],[0,0],[0,.58],[.5,.29]],'#F26A0D','#C8490A'); x.restore();
+    x.strokeStyle='rgba(255,255,255,.55)'; x.lineWidth=2; x.beginPath(); let [a0,b0]=P(-.5,-.29); x.moveTo(a0,b0); [[0,-.58],[.5,-.29],[0,0],[-.5,-.29]].forEach(([a,b])=>{ const [px,py]=P(a,b); x.lineTo(px,py); }); x.stroke();
+    x.fillStyle='rgba(255,255,255,.85)'; [[.1,-.05],[.32,.12]].forEach(([a,b])=>{ const [px,py]=P(a,b); x.beginPath(); x.arc(px,py,3,0,6.2832); x.fill(); }); }
+  dots(790,30,3,2,26,'rgba(28,37,52,.28)'); dots(1040,440,1,9,26,'rgba(242,106,13,.5)'); dots(32,470,1,6,24,'rgba(242,106,13,.4)');
+  x.fillStyle='rgba(242,106,13,.4)'; x.fillRect(46,345,28,28); x.fillStyle='rgba(255,168,100,.5)'; x.fillRect(80,322,34,34); x.fillStyle='rgba(242,106,13,.5)'; x.beginPath(); x.arc(112,430,12,0,6.2832); x.fill();
+
+  // 3. the brand frame: chamfered outline holding the exact logo and wordmark
+  cham(150,72,780,478,40); x.fillStyle='rgba(255,255,255,.5)'; x.fill(); x.strokeStyle=C.orange; x.lineWidth=2.5; x.stroke();
+  cham(164,86,752,450,32); x.strokeStyle='rgba(242,106,13,.25)'; x.lineWidth=1.5; x.stroke();
+  trace([[150,172],[116,172],[94,194]]); trace([[150,392],[118,392],[96,414]]); trace([[930,372],[962,372],[986,350]],4);
+  if(gd){ const w=480, h=w*gd.height/gd.width; x.drawImage(gd,CX-w/2,108,w,h); }
+  x.fillStyle='rgba(28,37,52,.7)'; x.font='400 25px Outfit, sans-serif'; ls('9px'); x.fillText("GOOGLE DEVELOPER'S DAY",CX,252);
+  if(wm){ const w=700, h=w*wm.height/wm.width; x.drawImage(wm,CX-w/2,282,w,h); }
+  ls('7px'); x.fillStyle='rgba(28,37,52,.6)'; x.font='300 22px Outfit, sans-serif'; x.fillText('WHERE IDEAS GET A LITTLE SPOOKY.',CX,462); ls('0px');
+  [['#4285f4',0],['#ea4335',1],['#fbbc04',2],['#34a853',3]].forEach(([col,i])=>{ x.fillStyle=col; x.fillRect(CX-100+i*50,490,50,5); });
+
+  // 4. the certificate panel: double outline, border opens around the seal
+  rr(PX,PY,PW,PH,46); x.fillStyle='rgba(255,255,255,.55)'; x.fill();
+  x.save(); rr(PX,PY,PW,PH,46); x.clip(); x.strokeStyle='rgba(28,37,52,.035)'; x.lineWidth=1; for(let gx=PX;gx<PX+PW;gx+=40){ x.beginPath(); x.moveTo(gx,PY); x.lineTo(gx,PY+PH); x.stroke(); } for(let gy=PY;gy<PY+PH;gy+=40){ x.beginPath(); x.moveTo(PX,gy); x.lineTo(PX+PW,gy); x.stroke(); } x.restore();
+  x.strokeStyle=C.orange; x.lineWidth=2.5; x.beginPath(); x.moveTo(CX-190,PY); x.lineTo(PX+46,PY); x.arcTo(PX,PY,PX,PY+46,46); x.lineTo(PX,PY+PH-46); x.arcTo(PX,PY+PH,PX+46,PY+PH,46); x.lineTo(PX+PW-46,PY+PH); x.arcTo(PX+PW,PY+PH,PX+PW,PY+PH-46,46); x.lineTo(PX+PW,PY+46); x.arcTo(PX+PW,PY,PX+PW-46,PY,46); x.lineTo(CX+190,PY); x.stroke();
+  x.strokeStyle='rgba(242,106,13,.22)'; x.lineWidth=1.5; rr(PX+16,PY+16,PW-32,PH-32,34); x.stroke();
+  [[-1],[1]].forEach(([d])=>{ x.strokeStyle=C.orange; x.lineWidth=2.5; x.beginPath(); x.moveTo(CX+d*176,PY); x.lineTo(CX+d*92,PY); x.stroke(); x.fillStyle=C.orange; x.beginPath(); x.arc(CX+d*92,PY,5,0,6.2832); x.fill(); });
+  { const R=56; x.save(); x.shadowColor='rgba(138,42,4,.25)'; x.shadowBlur=24; x.shadowOffsetY=8; x.fillStyle='#FFFBF4'; x.beginPath(); x.arc(CX,PY,R,0,6.2832); x.fill(); x.restore();
+    x.strokeStyle=C.orange; x.lineWidth=3; x.beginPath(); x.arc(CX,PY,R,0,6.2832); x.stroke(); x.strokeStyle='rgba(242,106,13,.3)'; x.lineWidth=1.5; x.beginPath(); x.arc(CX,PY,R-9,0,6.2832); x.stroke();
+    if(wm){ x.save(); x.beginPath(); x.arc(CX,PY,R-10,0,6.2832); x.clip(); const sw=176, sh=224, dh=84, dw=dh*sw/sh; x.drawImage(wm,678,0,sw,sh,CX-dw/2,PY-dh/2,dw,dh); x.restore(); } }
+
+  // 5. the team: name (gradient, shrinks to fit, wraps, no cap on length), then the lead and every member, one line each.
+  //    The block is measured first and scaled down only as much as needed, so very long names never collide with the footer.
+  const name = teamName() || 'Team', { lead, members } = cardPeople();
   const fitLine = (txt, weight, size, min) => { let s=size; for(;s>min;s-=2){ x.font=`${weight} ${s}px Outfit, sans-serif`; if(x.measureText(txt).width<=maxW) return txt; } x.font=`${weight} ${min}px Outfit, sans-serif`; let t=txt; while(t.length>3 && x.measureText(t+'…').width>maxW) t=t.slice(0,-1); return t===txt?txt:t.trim()+'…'; };
-  const { lead, members } = cardPeople(); let ny = top + (lines.length-1)*lh + 64;
-  const tag = (txt, y) => { x.fillStyle='rgba(17,17,18,.5)'; x.font='500 22px Outfit, sans-serif'; ls('7px'); x.fillText(txt,W/2,y); ls('0px'); };
-  if(lead){ tag('TEAM LEAD',ny); x.fillStyle='#111112'; const t=fitLine(lead,'600',46,26); x.fillText(t,W/2,ny+52); ny += 52; }
-  if(members.length){ tag(members.length>1?'MEMBERS':'MEMBER',ny+58); x.fillStyle='#111112'; members.slice(0,3).forEach((m,i)=>{ const t=fitLine(m,'500',38,24); x.fillText(t,W/2,ny+104+i*46); }); ny += 104+(Math.min(3,members.length)-1)*46; }
-  const yb = Math.min(Math.max(ny+84, 1130), 1170);
-  x.fillStyle='#f26a0d'; x.fillRect(W/2-50,yb-44,100,5);
-  x.fillStyle='#111112'; x.font='600 40px Outfit, sans-serif'; x.fillText('Ideas get a little spooky because of you.',W/2,yb+8);
-  x.fillStyle='rgba(17,17,18,.55)'; x.font='400 26px Outfit, sans-serif'; ls('3px'); if(S.team) x.fillText(`TEAM CODE  ${fmtCode(S.team.code)}`,W/2,H-118); ls('0px');
-  x.font='400 28px Outfit, sans-serif'; x.fillText(CONFIG.INSTAGRAM_HANDLE,W/2,H-70);
+  const tag = (txt, y) => { x.fillStyle=C.orange; x.font='600 20px Outfit, sans-serif'; ls('8px'); x.fillText(txt,CX,y); ls('0px'); };
+  const people = (k, draw) => {
+    let fs=Math.round(92*k), lines; for(;fs>=34;fs-=4){ x.font=`800 ${fs}px Outfit, sans-serif`; lines=wrapText(x,name,maxW); if(lines.length*fs*1.04<=170*k) break; }
+    x.font=`800 ${fs}px Outfit, sans-serif`; lines=wrapText(x,name,maxW);
+    const lh=fs*1.04, top=PY+112+fs*.86;
+    if(draw){ const gr=x.createLinearGradient(0,top-fs*.85,0,top+(lines.length-1)*lh+fs*.12); gr.addColorStop(0,'#972C02'); gr.addColorStop(.6,C.ember); gr.addColorStop(1,'#E26F1E'); x.fillStyle=gr; ls('-1px'); lines.forEach((l,i)=>x.fillText(l,CX,top+i*lh)); ls('0px'); }
+    let ny=top+(lines.length-1)*lh+56*k;
+    if(lead){ if(draw){ tag('TEAM LEAD',ny); x.fillStyle=C.ink; x.fillText(fitLine(lead,'700',Math.round(46*k),24),CX,ny+48*k); } ny+=48*k; }
+    if(members.length){ if(draw){ tag(members.length>1?'MEMBERS':'MEMBER',ny+56*k); x.fillStyle=C.ink; members.slice(0,3).forEach((m,i)=>x.fillText(fitLine(m,'600',Math.round(38*k),22),CX,ny+102*k+i*44*k)); } ny+=102*k+(Math.min(3,members.length)-1)*44*k; }
+    return ny;
+  };
+  let kk=1; for(const t of [1,.92,.85,.78,.72]){ kk=t; if(people(t,false)<=1128) break; }
+  // centre the block in the panel, so a small team looks as deliberate as a full one
+  const endY = people(kk,false), shift = clamp((1128-endY)/2, 0, 110);
+  x.save(); x.translate(0,shift);
+  x.fillStyle=C.ink; x.font='500 23px Outfit, sans-serif'; ls('9px'); x.fillText(S.team && S.team.size ? `VAULT CRACKED  ·  TEAM OF ${S.team.size}` : 'VAULT CRACKED',CX,PY+96); ls('0px');
+  const ny = people(kk,true); x.restore();
+
+  // 6. footer: serial and month (orange values), hashtags, with chamfered end ticks like the brand frame
+  const fy=Math.min(Math.max(ny+34,1150),1170);
+  x.strokeStyle=C.orange; x.lineWidth=2; x.beginPath(); x.moveTo(PX+54,fy+26); x.lineTo(PX+80,fy); x.lineTo(PX+PW-80,fy); x.lineTo(PX+PW-54,fy+26); x.stroke();
+  const fb=fy+62; x.font='500 22px Outfit, sans-serif'; ls('6px'); x.textAlign='left'; x.fillStyle=C.ink; const lbl='TEAM CODE'; x.fillText(lbl,PX+66,fb); const lw=x.measureText(lbl).width; x.fillStyle=C.orange; x.font='700 22px Outfit, sans-serif'; if(S.team) x.fillText(fmtCode(S.team.code),PX+66+lw+20,fb);
+  x.textAlign='right'; x.font='700 22px Outfit, sans-serif'; x.fillStyle=C.orange; x.fillText('2026',PX+PW-66,fb); const yw=x.measureText('2026').width; x.font='500 22px Outfit, sans-serif'; x.fillStyle=C.ink; x.fillText('OCTOBER',PX+PW-66-yw-20,fb); x.textAlign='center'; ls('0px');
+  x.strokeStyle='rgba(242,106,13,.6)'; x.lineWidth=2; x.beginPath(); x.moveTo(CX,fb-22); x.lineTo(CX,fb+4); x.stroke();
+  x.fillStyle=C.grey; x.font='400 21px Outfit, sans-serif'; ls('2px'); x.fillText(`${CONFIG.INSTAGRAM_HANDLE}   |   #HACKOBER   |   #GDGoC`,CX,fb+46); ls('0px');
   c.toBlob(blob=>{
     if(!blob){ showWinners(false); return; }                       // card could not be made: never leave anyone without the message
     const url=URL.createObjectURL(blob), img=$('#cardImg'); img.src=url; img.style.display='block'; $('#cardHint').style.display='block';
@@ -1981,6 +2086,9 @@ async function makeCard(){
     const btn=$('#cardBtn'); btn.style.display='inline-flex';
     btn.onclick=()=>{ const a=document.createElement('a'); a.href=url; a.download=fname; document.body.appendChild(a); a.click(); a.remove();
       sfx.found(); buzz([15,25,45]); toast('Card saved'); track('card_downloaded'); showWinners(); };
+    const li=$('#liBtn'); li.style.display='inline-flex';
+    li.onclick=async()=>{ const text=linkedInCaption(); try{ await navigator.clipboard.writeText(text); toast('Caption copied. Attach your card and post.'); }catch(e){ toast('Open LinkedIn and attach your card'); }
+      track('linkedin_share'); setTimeout(()=>window.open('https://www.linkedin.com/feed/?shareActive=true&text='+encodeURIComponent(text),'_blank','noopener'),500); };
     const file=new File([blob],fname,{type:'image/png'});
     if(navigator.canShare && navigator.canShare({files:[file]})){ const sb=$('#shareBtn'); sb.style.display='inline-flex'; sb.onclick=async()=>{ try{ await navigator.share({files:[file],title:'HACKOBER'}); }catch(e){} }; }
   },'image/png');
@@ -2023,7 +2131,7 @@ async function makeCard(){
   function report(){
     const nav=navigator, conn=nav.connection||{}, left=(targetMs()-nowMs())/1000, plan=S.plan||[];
     return {
-      Status:{ version:CONFIG.VERSION, scene:current, vault: isOpen()?'OPEN':'LOCKED (countdown)', opensAt:iso(targetMs())+(DEV.target?' (dev override)':''), remaining:fmtLeft(left), devOpenOverride:DEV.open },
+      Status:{ version:CONFIG.VERSION, scene:current, vault: isOpen()?'OPEN':'LOCKED (countdown)', opensAt:iso(targetMs())+(DEV.target?' (dev override)':''), remaining:fmtLeft(left), round1EndsAt:iso(round1Ms()), round1EndsIn:fmtLeft((round1Ms()-nowMs())/1000), devOpenOverride:DEV.open },
       Clock:{ deviceTime:iso(Date.now()), correctedTime:iso(nowMs()), offsetMs:Math.round(clockOffset), source:clockSrc, lastSync:clockSynced?iso(clockSynced):'never', timezone:Intl.DateTimeFormat().resolvedOptions().timeZone },
       Progress:{ role:S.role||'(none)', team:S.team?`${S.team.name} · ${fmtCode(S.team.code)} · size ${S.team.size||'?'}`:'(none)', games:plan.join(', ')||'(none)', plannedValid:plan.length===3&&new Set(plan).size===3&&plan.every(g=>GAMES[g]), locks:S.locks.map(o=>o?'■':'□').join(' '), started:S.started, teamDone:S.teamDone, feedbackDone:S.done, feedbackOpened:S.pending, skipped:S.skipped },
       Device:{ userAgent:nav.userAgent, viewport:`${innerWidth}×${innerHeight} @${devicePixelRatio}x`, screen:`${screen.width}×${screen.height}`, touchPoints:nav.maxTouchPoints, language:nav.language, online:nav.onLine, network:conn.effectiveType?`${conn.effectiveType} · ${conn.downlink||'?'} Mbps`:'n/a', memoryGB:nav.deviceMemory||'n/a', cores:nav.hardwareConcurrency||'n/a', installedApp:matchMedia('(display-mode: standalone)').matches, reducedMotion:matchMedia('(prefers-reduced-motion: reduce)').matches, fps },
