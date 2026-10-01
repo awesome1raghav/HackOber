@@ -810,7 +810,7 @@ addEventListener('unhandledrejection', e => devlog('promise', (e.reason && e.rea
 const _ce = console.error; console.error = function(...a){ try{ devlog('console', a.join(' ')); }catch(_){} return _ce.apply(console,a); };
 
 const CONFIG = {
-  VERSION: "4.4",
+  VERSION: "4.5",
   OPENS_AT: "2026-10-01T13:30:00+05:30",               // when the vault opens (India time): 1 Oct 2026, 1:30 pm. Until then the site shows only the wordmark and the timers.
   ROUND1_ENDS_AT: "2026-10-01T13:00:00+05:30",         // round 1 ends (India time): the second timer counts down to it, then says "Round 1 has ended".
   DEV_PIN_HASH: "0360d53e0ef2df7e56f62fceacf612e77c28e2b1591c9079983a7c51803dc6ea",   // SHA-256 of the developer PIN. Change with: python tools/set_dev_pin.py <new pin>
@@ -1991,90 +1991,97 @@ function linkedInCaption(){
 async function makeCard(){
   try{ await document.fonts.load('700 80px Outfit'); await document.fonts.load('300 30px Outfit'); }catch(e){}
   const [wm, gd] = await Promise.all([loadImg(A.wordmark), loadImg(A.gdg)]);
-  /* ---- "Ivory & Ember" LinkedIn card: the poster's own world, framed like a certificate -------------------
-     Colour theory: a warm ivory ground (~60%) with the brand ember orange and its analogous burnt-brown depth (~30%),
-     plus deep navy-ink type (~10%) that sits opposite the orange on the wheel, so names stay razor sharp.
-     Psychology: orange = energy, courage, enthusiasm; ivory = warmth, clarity, premium paper;
-     navy ink = trust and authority; the ember-brown gradient on the team name reads as achievement and craft. */
+  /* ---- "Clean Certificate" LinkedIn card ------------------------------------------------------------
+     A white card floating on a cool grey page, one idea per band: the brand, the team, then one row per person.
+     Colour theory: neutral white and cool grey (~70%) give the brand orange room to glow; orange (~20%) carries energy and
+     courage and always marks what matters (badges, team code, accents); near-black ink (~10%) is orange's strongest
+     contrast, so every name reads instantly and feels trustworthy. A pale peach tint (the orange at low saturation)
+     links pills and tiles to the brand without adding a new hue. */
   const W=1080, H=1350, c=document.createElement('canvas'); c.width=W; c.height=H; const x=c.getContext('2d'), ls=v=>{ if('letterSpacing' in x) x.letterSpacing=v; };
-  const C={ cream:'#F8F4EC', cream2:'#F3E9D8', orange:'#F26A0D', orangeHi:'#FF9A3D', cube:'#EA592A', ember:'#B8420B', brown:'#8A2A04', ink:'#1C2534', grey:'#8A8F9C' };
-  const maxW=820, PX=60, PW=960, PY=612, PH=682, CX=W/2;                         // lower panel: x, width, top, height; shared centre
+  const C={ ink:'#14171F', gray:'#6B7280', grayLt:'#9AA1AE', line:'#E9ECF1', page:'#EEF0F4', orange:'#F26A0D', orangeHi:'#FF9F2E', peach:'#FDE6CF', peachDeep:'#F8C79A' };
+  const M=30, CX=W/2, PX=60, PW=960;                                                // card margin, centre, panel/row x and width
   const rr=(px,py,w,h,r)=>{ x.beginPath(); x.moveTo(px+r,py); x.arcTo(px+w,py,px+w,py+h,r); x.arcTo(px+w,py+h,px,py+h,r); x.arcTo(px,py+h,px,py,r); x.arcTo(px,py,px+w,py,r); x.closePath(); };
-  const cham=(px,py,w,h,k)=>{ x.beginPath(); x.moveTo(px+k,py); x.lineTo(px+w-k,py); x.lineTo(px+w,py+k); x.lineTo(px+w,py+h-k); x.lineTo(px+w-k,py+h); x.lineTo(px+k,py+h); x.lineTo(px,py+h-k); x.lineTo(px,py+k); x.closePath(); };
-  const dots=(x0,y0,cols,rows,gap,col,r=2.2)=>{ x.fillStyle=col; for(let i=0;i<cols;i++) for(let j=0;j<rows;j++){ x.beginPath(); x.arc(x0+i*gap,y0+j*gap,r,0,6.2832); x.fill(); } };
-  const trace=(pts,node)=>{ x.strokeStyle='rgba(242,106,13,.7)'; x.lineWidth=2; x.beginPath(); pts.forEach(([a,b],i)=>i?x.lineTo(a,b):x.moveTo(a,b)); x.stroke(); const [a,b]=pts[pts.length-1]; x.fillStyle=C.orange; x.beginPath(); x.arc(a,b,node||4.5,0,6.2832); x.fill(); };
+  const dots=(x0,y0,cols,rows,gap,col,r=2.4)=>{ x.fillStyle=col; for(let i=0;i<cols;i++) for(let j=0;j<rows;j++){ x.beginPath(); x.arc(x0+i*gap,y0+j*gap,r,0,6.2832); x.fill(); } };
+  const spark=(px,py,r)=>{ x.fillStyle=C.orange; x.beginPath(); x.moveTo(px,py-r); x.quadraticCurveTo(px,py,px+r,py); x.quadraticCurveTo(px,py,px,py+r); x.quadraticCurveTo(px,py,px-r,py); x.quadraticCurveTo(px,py,px,py-r); x.fill(); };
+  const bat=(px,py,s,flip,col)=>{ x.save(); x.translate(px,py); x.scale(flip?-s:s,s); x.fillStyle=col; x.beginPath(); x.moveTo(0,-.1);
+    x.bezierCurveTo(-.2,-.5,-.7,-.55,-1,-.3); x.quadraticCurveTo(-.86,-.08,-.92,.14); x.quadraticCurveTo(-.66,.02,-.54,.3); x.quadraticCurveTo(-.4,.1,-.24,.3); x.quadraticCurveTo(-.12,.18,0,.4);
+    x.quadraticCurveTo(.12,.18,.24,.3); x.quadraticCurveTo(.4,.1,.54,.3); x.quadraticCurveTo(.66,.02,.92,.14); x.quadraticCurveTo(.86,-.08,1,-.3); x.bezierCurveTo(.7,-.55,.2,-.5,0,-.1); x.closePath(); x.fill();
+    x.beginPath(); x.moveTo(-.07,-.18); x.lineTo(-.04,-.34); x.lineTo(0,-.22); x.lineTo(.04,-.34); x.lineTo(.07,-.18); x.closePath(); x.fill(); x.restore(); };
+  const softPumpkin=(cx,cy,sz,a)=>{                         // drawn solid on its own layer, then laid down once at low opacity so overlaps never show seams
+    const T=Math.ceil(sz*2), t=document.createElement('canvas'); t.width=t.height=T; const g=t.getContext('2d'); g.translate(T/2,T/2); g.fillStyle=C.orange;
+    [[-.34,.42,.5],[.34,.42,.5],[0,.46,.54]].forEach(([ox,rx,ry])=>{ g.beginPath(); g.ellipse(ox*sz,0,rx*sz,ry*sz,0,0,6.2832); g.fill(); });
+    g.beginPath(); g.moveTo(-.06*sz,-.48*sz); g.quadraticCurveTo(-.04*sz,-.7*sz,.08*sz,-.78*sz); g.quadraticCurveTo(.15*sz,-.78*sz,.12*sz,-.7*sz); g.quadraticCurveTo(.06*sz,-.62*sz,.07*sz,-.48*sz); g.fill();
+    g.globalCompositeOperation='destination-out'; const poly=pts=>{ g.beginPath(); pts.forEach(([u,v],i)=>{ i?g.lineTo(u*sz,v*sz):g.moveTo(u*sz,v*sz); }); g.closePath(); g.fill(); };
+    poly([[-.32,-.04],[-.08,-.04],[-.2,-.28]]); poly([[.08,-.04],[.32,-.04],[.2,-.28]]); poly([[-.03,.02],[.03,.02],[0,-.06]]);
+    poly([[-.4,.12],[-.22,.34],[-.11,.24],[0,.37],[.11,.24],[.22,.34],[.4,.12],[.22,.2],[0,.25],[-.22,.2]]);
+    x.save(); x.globalAlpha=a; x.drawImage(t,cx-T/2,cy-T/2); x.restore(); };
+  const web=(ox,oy,R,dirX,dirY)=>{ x.save(); x.strokeStyle='rgba(20,23,31,.09)'; x.lineWidth=1.6; for(let a=0;a<=6;a++){ const t=a/6*Math.PI/2; x.beginPath(); x.moveTo(ox,oy); x.lineTo(ox+dirX*Math.cos(t)*R,oy+dirY*Math.sin(t)*R); x.stroke(); }
+    for(let r=1;r<=4;r++){ x.beginPath(); for(let a=0;a<=6;a++){ const t=a/6*Math.PI/2, rr2=R*r/4*(a%2?.92:1); const px=ox+dirX*Math.cos(t)*rr2, py=oy+dirY*Math.sin(t)*rr2; a?x.lineTo(px,py):x.moveTo(px,py); } x.stroke(); } x.restore(); };
   x.textAlign='center'; x.textBaseline='alphabetic';
 
-  // 1. warm paper ground, a faint blueprint grid, and two soft ember glows
-  const bg=x.createLinearGradient(0,0,W,H); bg.addColorStop(0,'#FFFBF4'); bg.addColorStop(1,C.cream); x.fillStyle=bg; x.fillRect(0,0,W,H);
-  [[W,0],[0,H]].forEach(([gx,gy])=>{ const g=x.createRadialGradient(gx,gy,0,gx,gy,720); g.addColorStop(0,'rgba(242,106,13,.14)'); g.addColorStop(1,'rgba(242,106,13,0)'); x.fillStyle=g; x.fillRect(0,0,W,H); });
-  x.strokeStyle='rgba(28,37,52,.04)'; x.lineWidth=1; for(let gx=0;gx<=W;gx+=54){ x.beginPath(); x.moveTo(gx,0); x.lineTo(gx,H); x.stroke(); } for(let gy=0;gy<=H;gy+=54){ x.beginPath(); x.moveTo(0,gy); x.lineTo(W,gy); x.stroke(); }
+  // 1. grey page, then the floating white card with a soft, deep shadow
+  x.fillStyle=C.page; x.fillRect(0,0,W,H);
+  x.save(); x.shadowColor='rgba(20,30,50,.16)'; x.shadowBlur=60; x.shadowOffsetY=18; x.fillStyle='#FFFFFF'; rr(M,M,W-2*M,H-2*M,58); x.fill(); x.restore();
+  x.save(); rr(M,M,W-2*M,H-2*M,58); x.clip();
+  const sheen=x.createLinearGradient(0,M,0,M+520); sheen.addColorStop(0,'#FFFFFF'); sheen.addColorStop(1,'#FFFBF6'); x.fillStyle=sheen; x.fillRect(M,M,W-2*M,H);
 
-  // 2. poster ornaments: bottom-left ember ring, wedges, the 3D # and @, the cube, dotted matrices
-  { x.save(); const ag=x.createLinearGradient(0,H-220,230,H); ag.addColorStop(0,C.orangeHi); ag.addColorStop(1,C.cube); x.strokeStyle=ag; x.lineWidth=58; x.lineCap='butt'; x.beginPath(); x.arc(-6,H+6,168,-Math.PI/2,0); x.stroke(); x.restore(); }
-  { const tg=x.createLinearGradient(W-170,H-110,W,H); tg.addColorStop(0,C.orangeHi); tg.addColorStop(1,C.cube); x.fillStyle=tg; x.beginPath(); x.moveTo(W,H-120); x.lineTo(W,H); x.lineTo(W-190,H); x.closePath(); x.fill();
-    x.fillStyle=C.orange; x.globalAlpha=.9; x.fillRect(230,H-34,86,34); x.globalAlpha=.55; x.fillRect(560,H-22,40,22); x.globalAlpha=1;
-    const tg2=x.createLinearGradient(W-90,690,W,790); tg2.addColorStop(0,C.orangeHi); tg2.addColorStop(1,C.cube); x.fillStyle=tg2; x.beginPath(); x.moveTo(W,690); x.lineTo(W,800); x.lineTo(W-90,800); x.closePath(); x.fill(); }
-  { x.save(); x.translate(86,222); x.rotate(-.13); x.font='800 200px Outfit, sans-serif'; x.fillStyle=C.brown; x.fillText('#',9,9); x.fillStyle=C.ember; x.fillText('#',5,5); const hg=x.createLinearGradient(0,-160,0,40); hg.addColorStop(0,C.orangeHi); hg.addColorStop(1,C.cube); x.fillStyle=hg; x.fillText('#',0,0); x.restore(); }
-  { x.save(); x.font='800 130px Outfit, sans-serif'; x.fillStyle='rgba(138,143,156,.5)'; x.fillText('@',706,72); x.restore(); }
-  { const cx=1034, cy=124, s=236; const P=(a,b)=>[cx+a*s,cy+b*s];
-    const face=(pts,g0,g1)=>{ const gr=x.createLinearGradient(...P(pts[0][0],pts[0][1]),...P(pts[2][0],pts[2][1])); gr.addColorStop(0,g0); gr.addColorStop(1,g1); x.fillStyle=gr; x.beginPath(); pts.forEach(([a,b],i)=>{ const [px,py]=P(a,b); i?x.lineTo(px,py):x.moveTo(px,py); }); x.closePath(); x.fill(); };
-    x.save(); x.shadowColor='rgba(138,42,4,.35)'; x.shadowBlur=40; x.shadowOffsetY=18;
-    face([[-.5,-.29],[0,-.58],[.5,-.29],[0,0]],'#FFB066','#F26A0D'); face([[-.5,-.29],[0,0],[0,.58],[-.5,.29]],'#E2540F','#B8420B'); face([[.5,-.29],[0,0],[0,.58],[.5,.29]],'#F26A0D','#C8490A'); x.restore();
-    x.strokeStyle='rgba(255,255,255,.55)'; x.lineWidth=2; x.beginPath(); let [a0,b0]=P(-.5,-.29); x.moveTo(a0,b0); [[0,-.58],[.5,-.29],[0,0],[-.5,-.29]].forEach(([a,b])=>{ const [px,py]=P(a,b); x.lineTo(px,py); }); x.stroke();
-    x.fillStyle='rgba(255,255,255,.85)'; [[.1,-.05],[.32,.12]].forEach(([a,b])=>{ const [px,py]=P(a,b); x.beginPath(); x.arc(px,py,3,0,6.2832); x.fill(); }); }
-  dots(790,30,3,2,26,'rgba(28,37,52,.28)'); dots(1040,440,1,9,26,'rgba(242,106,13,.5)'); dots(32,470,1,6,24,'rgba(242,106,13,.4)');
-  x.fillStyle='rgba(242,106,13,.4)'; x.fillRect(46,345,28,28); x.fillStyle='rgba(255,168,100,.5)'; x.fillRect(80,322,34,34); x.fillStyle='rgba(242,106,13,.5)'; x.beginPath(); x.arc(112,430,12,0,6.2832); x.fill();
+  // 2. quiet decoration: dot matrices, web, faded pumpkin and bats (all very low contrast)
+  dots(896,58,6,6,24,'rgba(242,106,13,.55)',2.2); dots(60,1150,7,6,26,'rgba(242,106,13,.5)',2.2);
+  web(M,H-M,230,1,-1); softPumpkin(W-M-76,H-M-52,250,.09);
 
-  // 3. the brand frame: chamfered outline holding the exact logo and wordmark
-  cham(150,72,780,478,40); x.fillStyle='rgba(255,255,255,.5)'; x.fill(); x.strokeStyle=C.orange; x.lineWidth=2.5; x.stroke();
-  cham(164,86,752,450,32); x.strokeStyle='rgba(242,106,13,.25)'; x.lineWidth=1.5; x.stroke();
-  trace([[150,172],[116,172],[94,194]]); trace([[150,392],[118,392],[96,414]]); trace([[930,372],[962,372],[986,350]],4);
-  if(gd){ const w=480, h=w*gd.height/gd.width; x.drawImage(gd,CX-w/2,108,w,h); }
-  x.fillStyle='rgba(28,37,52,.7)'; x.font='400 25px Outfit, sans-serif'; ls('9px'); x.fillText("GOOGLE DEVELOPER'S DAY",CX,252);
-  if(wm){ const w=700, h=w*wm.height/wm.width; x.drawImage(wm,CX-w/2,282,w,h); }
-  ls('7px'); x.fillStyle='rgba(28,37,52,.6)'; x.font='300 22px Outfit, sans-serif'; x.fillText('WHERE IDEAS GET A LITTLE SPOOKY.',CX,462); ls('0px');
-  [['#4285f4',0],['#ea4335',1],['#fbbc04',2],['#34a853',3]].forEach(([col,i])=>{ x.fillStyle=col; x.fillRect(CX-100+i*50,490,50,5); });
+  // 3. the brand: exact logo and wordmark
+  if(gd){ const w=560, h=w*gd.height/gd.width; x.drawImage(gd,CX-w/2,66,w,h); }
+  x.fillStyle='#5B6270'; x.font='400 26px Outfit, sans-serif'; ls('11px'); x.fillText("GOOGLE DEVELOPER'S DAY",CX,204); ls('0px');
+  if(wm){ const w=800, h=w*wm.height/wm.width; x.drawImage(wm,CX-w/2,228,w,h); }
+  x.fillStyle=C.gray; x.font='300 22px Outfit, sans-serif'; ls('8px'); x.fillText('WHERE IDEAS GET A LITTLE SPOOKY.',CX,414); ls('0px');
 
-  // 4. the certificate panel: double outline, border opens around the seal
-  rr(PX,PY,PW,PH,46); x.fillStyle='rgba(255,255,255,.55)'; x.fill();
-  x.save(); rr(PX,PY,PW,PH,46); x.clip(); x.strokeStyle='rgba(28,37,52,.035)'; x.lineWidth=1; for(let gx=PX;gx<PX+PW;gx+=40){ x.beginPath(); x.moveTo(gx,PY); x.lineTo(gx,PY+PH); x.stroke(); } for(let gy=PY;gy<PY+PH;gy+=40){ x.beginPath(); x.moveTo(PX,gy); x.lineTo(PX+PW,gy); x.stroke(); } x.restore();
-  x.strokeStyle=C.orange; x.lineWidth=2.5; x.beginPath(); x.moveTo(CX-190,PY); x.lineTo(PX+46,PY); x.arcTo(PX,PY,PX,PY+46,46); x.lineTo(PX,PY+PH-46); x.arcTo(PX,PY+PH,PX+46,PY+PH,46); x.lineTo(PX+PW-46,PY+PH); x.arcTo(PX+PW,PY+PH,PX+PW,PY+PH-46,46); x.lineTo(PX+PW,PY+46); x.arcTo(PX+PW,PY,PX+PW-46,PY,46); x.lineTo(CX+190,PY); x.stroke();
-  x.strokeStyle='rgba(242,106,13,.22)'; x.lineWidth=1.5; rr(PX+16,PY+16,PW-32,PH-32,34); x.stroke();
-  [[-1],[1]].forEach(([d])=>{ x.strokeStyle=C.orange; x.lineWidth=2.5; x.beginPath(); x.moveTo(CX+d*176,PY); x.lineTo(CX+d*92,PY); x.stroke(); x.fillStyle=C.orange; x.beginPath(); x.arc(CX+d*92,PY,5,0,6.2832); x.fill(); });
-  { const R=56; x.save(); x.shadowColor='rgba(138,42,4,.25)'; x.shadowBlur=24; x.shadowOffsetY=8; x.fillStyle='#FFFBF4'; x.beginPath(); x.arc(CX,PY,R,0,6.2832); x.fill(); x.restore();
-    x.strokeStyle=C.orange; x.lineWidth=3; x.beginPath(); x.arc(CX,PY,R,0,6.2832); x.stroke(); x.strokeStyle='rgba(242,106,13,.3)'; x.lineWidth=1.5; x.beginPath(); x.arc(CX,PY,R-9,0,6.2832); x.stroke();
-    if(wm){ x.save(); x.beginPath(); x.arc(CX,PY,R-10,0,6.2832); x.clip(); const sw=176, sh=224, dh=84, dw=dh*sw/sh; x.drawImage(wm,678,0,sw,sh,CX-dw/2,PY-dh/2,dw,dh); x.restore(); } }
+  // 4. the team panel: "TEAM OF N", then the team name (fits, wraps, never capped)
+  const PYt=446, name=teamName()||'Team', size=(S.team&&S.team.size)||0;
+  let fs=118, lines; for(;fs>=44;fs-=4){ x.font=`800 ${fs}px Outfit, sans-serif`; lines=wrapText(x,name,600); if(lines.length<=2 && lines.length*fs*1.0<=(lines.length===1?124:132)) break; }
+  x.font=`800 ${fs}px Outfit, sans-serif`; lines=wrapText(x,name,600); if(lines.length>2) lines=[lines[0],(lines[1]+' '+lines.slice(2).join(' '))];
+  const PH = lines.length>1 ? 244 : 214;
+  x.save(); rr(PX,PYt,PW,PH,40); x.fillStyle='#FFFFFF'; x.shadowColor='rgba(242,106,13,.10)'; x.shadowBlur=24; x.shadowOffsetY=6; x.fill(); x.restore();
+  x.save(); rr(PX,PYt,PW,PH,40); x.clip(); softPumpkin(PX+PW-76,PYt+PH*.56,PH*.98,.11); bat(PX+120,PYt+100,50,false,'rgba(20,23,31,.1)'); bat(PX+70,PYt+PH-70,34,true,'rgba(20,23,31,.1)'); x.restore();
+  x.strokeStyle=C.orange; x.lineWidth=2; rr(PX,PYt,PW,PH,40); x.stroke();
+  { const lab=size?`TEAM OF ${size}`:'TEAM'; x.font='500 30px Outfit, sans-serif'; ls('6px'); const lw=x.measureText(lab).width; x.fillStyle='#4B5260'; x.fillText(lab,CX+3,PYt+56); ls('0px');
+    x.fillStyle=C.orange; x.fillRect(CX-lw/2-100,PYt+46,70,3); x.fillRect(CX+lw/2+30,PYt+46,70,3); }
+  { x.font=`800 ${fs}px Outfit, sans-serif`; x.fillStyle=C.ink; ls('-2px'); const lh=fs*1.0, top=PYt+66+fs*.82+(lines.length>1?16:0); lines.forEach((l,i)=>x.fillText(l,CX,top+i*lh)); ls('0px');
+    const by=top+(lines.length-1)*lh; const nameW2=Math.max(...lines.map(l=>x.measureText(l).width)); const sx=clamp(nameW2/2+54,290,410); x.strokeStyle=C.orange; x.lineWidth=3.5; x.lineCap='round';
+    [[-1],[1]].forEach(([d])=>{ x.beginPath(); x.moveTo(CX+d*sx,by-fs*.42); x.quadraticCurveTo(CX+d*(sx+8),by+22,CX+d*(sx-90),by+24); x.stroke(); spark(CX+d*(sx+6),by-fs*.52,15); }); }
 
-  // 5. the team: name (gradient, shrinks to fit, wraps, no cap on length), then the lead and every member, one line each.
-  //    The block is measured first and scaled down only as much as needed, so very long names never collide with the footer.
-  const name = teamName() || 'Team', { lead, members } = cardPeople();
-  const fitLine = (txt, weight, size, min) => { let s=size; for(;s>min;s-=2){ x.font=`${weight} ${s}px Outfit, sans-serif`; if(x.measureText(txt).width<=maxW) return txt; } x.font=`${weight} ${min}px Outfit, sans-serif`; let t=txt; while(t.length>3 && x.measureText(t+'…').width>maxW) t=t.slice(0,-1); return t===txt?txt:t.trim()+'…'; };
-  const tag = (txt, y) => { x.fillStyle=C.orange; x.font='600 20px Outfit, sans-serif'; ls('8px'); x.fillText(txt,CX,y); ls('0px'); };
-  const people = (k, draw) => {
-    let fs=Math.round(92*k), lines; for(;fs>=34;fs-=4){ x.font=`800 ${fs}px Outfit, sans-serif`; lines=wrapText(x,name,maxW); if(lines.length*fs*1.04<=170*k) break; }
-    x.font=`800 ${fs}px Outfit, sans-serif`; lines=wrapText(x,name,maxW);
-    const lh=fs*1.04, top=PY+112+fs*.86;
-    if(draw){ const gr=x.createLinearGradient(0,top-fs*.85,0,top+(lines.length-1)*lh+fs*.12); gr.addColorStop(0,'#972C02'); gr.addColorStop(.6,C.ember); gr.addColorStop(1,'#E26F1E'); x.fillStyle=gr; ls('-1px'); lines.forEach((l,i)=>x.fillText(l,CX,top+i*lh)); ls('0px'); }
-    let ny=top+(lines.length-1)*lh+56*k;
-    if(lead){ if(draw){ tag('TEAM LEAD',ny); x.fillStyle=C.ink; x.fillText(fitLine(lead,'700',Math.round(46*k),24),CX,ny+48*k); } ny+=48*k; }
-    if(members.length){ if(draw){ tag(members.length>1?'MEMBERS':'MEMBER',ny+56*k); x.fillStyle=C.ink; members.slice(0,3).forEach((m,i)=>x.fillText(fitLine(m,'600',Math.round(38*k),22),CX,ny+102*k+i*44*k)); } ny+=102*k+(Math.min(3,members.length)-1)*44*k; }
-    return ny;
-  };
-  let kk=1; for(const t of [1,.92,.85,.78,.72]){ kk=t; if(people(t,false)<=1128) break; }
-  // centre the block in the panel, so a small team looks as deliberate as a full one
-  const endY = people(kk,false), shift = clamp((1128-endY)/2, 0, 110);
-  x.save(); x.translate(0,shift);
-  x.fillStyle=C.ink; x.font='500 23px Outfit, sans-serif'; ls('9px'); x.fillText(S.team && S.team.size ? `VAULT CRACKED  ·  TEAM OF ${S.team.size}` : 'VAULT CRACKED',CX,PY+96); ls('0px');
-  const ny = people(kk,true); x.restore();
+  // 5. one row per person: orange number badge, name, role pill, and a truthful status tile
+  const lead=(cardPeople().lead||'').trim(), mem=cardPeople().members.slice(0,3), people=[]; if(lead) people.push({n:lead,role:'Team Lead'}); mem.forEach(m=>people.push({n:m,role:'Member'}));
+  const n=Math.max(1,people.length), rowsTop=PYt+PH+30, rowsBottom=1150, gap=n>=4?14:n===3?20:28, hmax=n===2?196:170;
+  const h=Math.min(hmax,(rowsBottom-rowsTop-(n-1)*gap)/n), total=n*h+(n-1)*gap, k=h/hmax; let ry=rowsTop+Math.max(0,(rowsBottom-rowsTop-total)/2);
+  const nameW=330, wide = people.some(p=>{ x.font='800 34px Outfit, sans-serif'; return x.measureText(p.n).width>nameW*1.9; });       // very long names get the whole row
+  const wrapW = wide ? 640 : nameW;
+  const pillH=Math.max(32,46*k), kt=Math.max(k,.72);
+  const crown=(px,py,s)=>{ x.strokeStyle=C.ink; x.lineWidth=Math.max(2,2.4*k); x.lineJoin='round'; x.beginPath(); x.moveTo(px,py+s*.8); x.lineTo(px,py+s*.25); x.lineTo(px+s*.26,py+s*.52); x.lineTo(px+s*.5,py+s*.05); x.lineTo(px+s*.74,py+s*.52); x.lineTo(px+s,py+s*.25); x.lineTo(px+s,py+s*.8); x.closePath(); x.stroke(); x.beginPath(); x.moveTo(px,py+s*.97); x.lineTo(px+s,py+s*.97); x.stroke(); };
+  const group=(px,py,s)=>{ x.strokeStyle=C.ink; x.lineWidth=Math.max(2,2.4*k); x.beginPath(); x.arc(px+s*.32,py+s*.28,s*.2,0,6.2832); x.stroke(); x.beginPath(); x.arc(px+s*.74,py+s*.34,s*.15,0,6.2832); x.stroke(); x.beginPath(); x.arc(px+s*.32,py+s*1.02,s*.36,Math.PI*1.1,Math.PI*1.9); x.stroke(); x.beginPath(); x.arc(px+s*.76,py+s*.98,s*.26,Math.PI*1.1,Math.PI*1.8); x.stroke(); };
+  people.forEach((p,i)=>{
+    x.save(); rr(PX,ry,PW,h,34*Math.max(.7,k)); x.fillStyle='#FFFFFF'; x.shadowColor='rgba(30,40,60,.10)'; x.shadowBlur=28; x.shadowOffsetY=8; x.fill(); x.restore(); x.strokeStyle=C.line; x.lineWidth=1.5; rr(PX,ry,PW,h,34*Math.max(.7,k)); x.stroke();
+    const bs=Math.min(104*k,h-28), bx=PX+24*Math.max(.8,k), by=ry+(h-bs)/2; const bg=x.createLinearGradient(bx,by,bx+bs,by+bs); bg.addColorStop(0,C.orangeHi); bg.addColorStop(1,C.orange);
+    x.save(); x.shadowColor='rgba(242,106,13,.35)'; x.shadowBlur=18; x.shadowOffsetY=8; x.fillStyle=bg; rr(bx,by,bs,bs,bs*.24); x.fill(); x.restore();
+    x.fillStyle='#FFFFFF'; x.font=`800 ${Math.round(bs*.44)}px Outfit, sans-serif`; x.fillText(String(i+1).padStart(2,'0'),bx+bs/2,by+bs*.66);
+    const dx=bx+bs+26*Math.max(.8,k); x.fillStyle=C.line; x.fillRect(dx,ry+h*.22,2,h*.56);
+    const tx=dx+26*Math.max(.8,k); x.textAlign='left';
+    // name: shrinks first, then wraps to two lines, then ellipsis; the pill always fits below it
+    let nf=Math.round(52*Math.max(k,.7)), nl; for(;nf>=22;nf-=2){ x.font=`800 ${nf}px Outfit, sans-serif`; nl=wrapText(x,p.n,wrapW); if(nl.length<=2 && nl.length*nf*1.08+pillH+16*k <= h-24*k) break; }
+    x.font=`800 ${nf}px Outfit, sans-serif`; nl=wrapText(x,p.n,wrapW); if(nl.length>2) nl=[nl[0], (nl[1]+'…')]; nl=nl.slice(0,2);
+    const blockH=nl.length*nf*1.08+14*k+pillH, ny0=ry+(h-blockH)/2+nf*.86; x.fillStyle=C.ink; nl.forEach((l,j)=>x.fillText(l,tx,ny0+j*nf*1.08));
+    const py=ry+(h-blockH)/2+nl.length*nf*1.08+14*k, ps=pillH*.5, label=p.role; x.font=`500 ${Math.round(pillH*.52)}px Outfit, sans-serif`; const lw=x.measureText(label).width, pw=ps+lw+pillH*.9;
+    x.fillStyle=C.peach; rr(tx,py,pw,pillH,pillH/2); x.fill(); (i===0&&lead?crown:group)(tx+pillH*.3,py+pillH*.25,ps); x.fillStyle=C.ink; x.fillText(label,tx+pillH*.3+ps+pillH*.2,py+pillH*.67);
+    if(!wide){ const d2=PX+PW*.585; x.fillStyle=C.line; x.fillRect(d2,ry+h*.22,2,h*.56); const ts=Math.min(84*k,h-30), rx=d2+30*Math.max(.8,k), ty=ry+(h-ts)/2;
+      x.fillStyle=C.peach; rr(rx,ty,ts,ts,ts*.26); x.fill(); x.strokeStyle=C.orange; x.lineWidth=Math.max(3,5.5*k); x.lineCap='round'; x.lineJoin='round'; x.beginPath(); x.moveTo(rx+ts*.27,ty+ts*.53); x.lineTo(rx+ts*.44,ty+ts*.7); x.lineTo(rx+ts*.76,ty+ts*.32); x.stroke();
+      const ttx=rx+ts+22*Math.max(.8,k); x.fillStyle=C.ink; x.font=`700 ${Math.round(30*kt)}px Outfit, sans-serif`; x.fillText('Vault cracked',ttx,ry+h/2-2*kt); x.fillStyle=C.gray; x.font=`400 ${Math.round(24*kt)}px Outfit, sans-serif`; x.fillText('Challenge completed',ttx,ry+h/2+30*kt); }
+    x.textAlign='center'; ry+=h+gap;
+  });
 
-  // 6. footer: serial and month (orange values), hashtags, with chamfered end ticks like the brand frame
-  const fy=Math.min(Math.max(ny+34,1150),1170);
-  x.strokeStyle=C.orange; x.lineWidth=2; x.beginPath(); x.moveTo(PX+54,fy+26); x.lineTo(PX+80,fy); x.lineTo(PX+PW-80,fy); x.lineTo(PX+PW-54,fy+26); x.stroke();
-  const fb=fy+62; x.font='500 22px Outfit, sans-serif'; ls('6px'); x.textAlign='left'; x.fillStyle=C.ink; const lbl='TEAM CODE'; x.fillText(lbl,PX+66,fb); const lw=x.measureText(lbl).width; x.fillStyle=C.orange; x.font='700 22px Outfit, sans-serif'; if(S.team) x.fillText(fmtCode(S.team.code),PX+66+lw+20,fb);
-  x.textAlign='right'; x.font='700 22px Outfit, sans-serif'; x.fillStyle=C.orange; x.fillText('2026',PX+PW-66,fb); const yw=x.measureText('2026').width; x.font='500 22px Outfit, sans-serif'; x.fillStyle=C.ink; x.fillText('OCTOBER',PX+PW-66-yw-20,fb); x.textAlign='center'; ls('0px');
-  x.strokeStyle='rgba(242,106,13,.6)'; x.lineWidth=2; x.beginPath(); x.moveTo(CX,fb-22); x.lineTo(CX,fb+4); x.stroke();
-  x.fillStyle=C.grey; x.font='400 21px Outfit, sans-serif'; ls('2px'); x.fillText(`${CONFIG.INSTAGRAM_HANDLE}   |   #HACKOBER   |   #GDGoC`,CX,fb+46); ls('0px');
+  // 6. footer: short orange rule, team code (orange value), handle
+  const fy=1186; x.fillStyle=C.orange; x.fillRect(CX-40,fy,80,4);
+  x.font='400 27px Outfit, sans-serif'; ls('7px'); const tl='TEAM CODE', code=S.team?fmtCode(S.team.code):''; const tw=x.measureText(tl+'   '+code).width; x.textAlign='left'; x.fillStyle=C.gray; x.fillText(tl,CX-tw/2,fy+56); const w1=x.measureText(tl+'   ').width; x.fillStyle=C.orange; x.font='700 27px Outfit, sans-serif'; x.fillText(code,CX-tw/2+w1,fy+56); x.textAlign='center'; ls('0px');
+  x.fillStyle=C.gray; x.font='400 27px Outfit, sans-serif'; ls('1px'); x.fillText(`${CONFIG.INSTAGRAM_HANDLE}   ·   #HACKOBER   #GDGoC`,CX,fy+106); ls('0px');
+  x.restore();
   c.toBlob(blob=>{
     if(!blob){ showWinners(false); return; }                       // card could not be made: never leave anyone without the message
     const url=URL.createObjectURL(blob), img=$('#cardImg'); img.src=url; img.style.display='block'; $('#cardHint').style.display='block';
